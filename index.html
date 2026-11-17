@@ -173,8 +173,9 @@ textarea{min-height:80px;resize:vertical}
 .taken{display:grid;justify-items:end;gap:2px;color:var(--good);font-weight:700;font-size:15px;text-align:right}
 .taken svg{width:22px;height:22px}
 .taken button{background:none;border:0;color:var(--muted);font:500 13px var(--f-body);text-decoration:underline;cursor:pointer;min-height:32px}
-.quick{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
-.quick button{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;min-height:60px;font:600 15.5px var(--f-body);color:var(--ink);cursor:pointer;text-align:left}
+.quick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media (min-width:640px){.quick{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.quick button{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:10px 12px;min-height:60px;font:600 15px var(--f-body);line-height:1.2;color:var(--ink);cursor:pointer;text-align:left}
 .quick button:hover{border-color:var(--accent)}
 .quick svg{width:26px;height:26px;color:var(--accent);flex:none}
 .tot{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
@@ -801,8 +802,14 @@ const ICONS = {
 };
 const icon = n => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]}</svg>`;
 const MARK = `<svg class="mark" viewBox="0 0 64 64" fill="none" stroke-width="5" stroke-linecap="round" aria-hidden="true"><path class="arc" d="M13.75 36.25a18.25 18.25 0 0 1 36.5 0"/><circle cx="26.75" cy="37.5" r="4.25"/><path class="b" d="M19.5 51.25a7.25 7.25 0 0 1 14.5 0"/><circle cx="39.25" cy="40.25" r="3.25"/><path class="b" d="M34 51.25a5.25 5.25 0 0 1 10.5 0"/></svg>`;
-const NAV = [["oggi","Oggi","home"],["spese","Spese","wallet"],["documenti","Documenti","folder"],["salute","Salute","heart"],["altro","Altro","grid"]];
-const ALTRO = [["vicino","Vicino a te","pin","Farmacie, ospedali, guardia medica, uffici"],["bacheca","Trova una badante","search","Badanti iscritte nella vostra zona"],["piano","Il piano","compass","Che assistenza serve e cosa fare adesso"],["badante","Badante","usercheck","Contratto, costi e candidate"],["aiuti","104 e aiuti","shield","Pratiche, permessi e agevolazioni"],["famiglia","Famiglia","users","Chi assistete e chi divide le spese"]];
+const NAV = [["oggi","Oggi","home"],["salute","Salute","heart"],["documenti","Documenti","folder"],["spese","Spese","wallet"],["altro","Altro","grid"]];
+const ALTRO = [
+  ["vicino","Vicino a te","pin","Farmacia, pronto soccorso, guardia medica","Aiuti e servizi"],
+  ["bacheca","Trova una badante","search","Badanti iscritte nella vostra zona","Aiuti e servizi"],
+  ["badante","La vostra badante","usercheck","Contratto, costo e candidate","Aiuti e servizi"],
+  ["aiuti","104 e aiuti","shield","Pratiche, permessi e agevolazioni","Aiuti e servizi"],
+  ["piano","Il piano","compass","Le 15 domande e cosa fare adesso","Aiuti e servizi"],
+  ["famiglia","Famiglia e dati","users","Chi assistete, fratelli, copia di sicurezza","Famiglia e impostazioni"]];
 const TABS = [...NAV.filter(n => n[0] !== "altro"), ...ALTRO];
 let tab = TABS.some(t => "#"+t[0] === location.hash) ? location.hash.slice(1) : "oggi";
 let mese = curMonth();
@@ -815,7 +822,8 @@ function renderTabs(){
 $("#tabs").onclick = e => {
   const b = e.target.closest("[data-tab]"); if (!b) return;
   if (b.dataset.tab !== "altro") return setTab(b.dataset.tab);
-  showMsg("Altro", `<div class="sheet-list">${ALTRO.map(([k,l,ic,d]) => `<button type="button" data-sheet="${k}">${icon(ic)}<div><b>${l}</b><span>${d}</span></div></button>`).join("")}</div>`);
+  const gruppi = [...new Set(ALTRO.map(a => a[4]))];
+  showMsg("Altro", gruppi.map(g => `<p class="small muted" style="margin:4px 0 -4px;font-weight:600">${g}</p><div class="sheet-list">${ALTRO.filter(a => a[4] === g).map(([k,l,ic,d]) => `<button type="button" data-sheet="${k}">${icon(ic)}<div><b>${l}</b><span>${d}</span></div></button>`).join("")}</div>`).join(""));
   form.onclick = ev => { const s = ev.target.closest("[data-sheet]"); if (s) { dlg.close(); setTab(s.dataset.sheet); } };
 };
 const saluto = () => { const h = new Date().getHours(), n = S.config.utente?.nome; return (h < 13 ? "Buongiorno" : h < 18 ? "Buon pomeriggio" : "Buonasera") + (n ? ", " + n : ""); };
@@ -826,11 +834,11 @@ function installCard(){
   let hidden = false; try { hidden = localStorage.getItem("accanto-noinstall") === "1"; } catch {}
   if (!local || standalone() || hidden) return "";
   const ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
-  return `<div class="install"><h3>Mettila sulla schermata Home</h3>
-    ${installEvt ? `<p>Così si apre con un tocco, come le altre app.</p><p><button type="button" class="btn" data-install>${icon("download")}Installa Accanto</button></p>`
-      : ios ? `<p>In basso in Safari tocca ${icon("share")} <b>Condividi</b>, poi scegli <b>«Aggiungi alla schermata Home»</b>.</p>`
-      : `<p>Nel browser tocca il menu con i tre puntini in alto a destra, poi <b>«Installa app»</b> o <b>«Aggiungi a schermata Home»</b>.</p>`}
-    <p><button type="button" class="btn link" data-hideinstall style="padding:0">Non ora</button></p></div>`;
+  return `<div class="install"><h3>${icon("download")} Mettila sulla schermata Home</h3>
+    ${installEvt ? `<p><button type="button" class="btn" data-install>Installa Accanto</button></p>`
+      : ios ? `<p>In Safari tocca ${icon("share")} <b>Condividi</b>, poi <b>«Aggiungi alla schermata Home»</b>.</p>`
+      : `<p>Tocca i tre puntini in alto a destra, poi <b>«Installa app»</b>.</p>`}
+    <p><button type="button" class="btn link" data-hideinstall style="padding:0;min-height:36px">Non mostrare più</button></p></div>`;
 }
 /* ---------- Pastiglie di oggi ---------- */
 const oreDi = f => [...new Set(((f.ore || f.orari || "").match(/\b([01]?\d|2[0-3])[:.][0-5]\d\b/g) || []).map(o => o.replace(".", ":").padStart(5, "0")))].sort();
@@ -903,7 +911,7 @@ const DIARIO = {
   evacuazione: {t: "Evacuazione", u: "", ic: "check"},
   nota: {t: "Nota", u: "", ic: "note"}
 };
-let giornoDiario = null;
+let giornoDiario = null, saluteTab = "pastiglie";
 const numero = v => parseFloat(String(v ?? "").replace(",", ".")) || 0;
 const fmtMl = n => n.toLocaleString("it-IT") + " ml";
 function totaliGiorno(data){
@@ -1112,30 +1120,17 @@ function vOggi(){
   S.farmaci.forEach(f => { if (f.finisce && daysTo(f.finisce) <= 10) { const n = daysTo(f.finisce); allarmi.push({d:f.finisce, h:item("farmaci", f, f.nome, "Farmaco da ricomprare", pill(n<0?"Finito":`Finisce tra ${n} gg`, n<=3?"bad":"warn"))}); } });
   S.agenda.forEach(e => { const n = daysTo(e.data); if (n >= 0 && n <= 14) allarmi.push({d:e.data, h:item("agenda", e, e.titolo, `${fmtDate(e.data)}${e.ora?" alle "+esc(e.ora):""}${e.chi?" · "+esc(famName(e.chi)):""}`, pill(n===0?"Oggi":n===1?"Domani":`Tra ${n} gg`, n<=1?"warn":""))}); });
   allarmi.sort((x,y) => x.d < y.d ? -1 : 1);
+  const titolo = (ic, t, link) => `<div class="row between" style="margin-bottom:8px"><h3 style="margin:0">${icon(ic).replace("<svg", '<svg style="width:22px;height:22px;vertical-align:-4px;margin-right:8px;color:var(--accent)"')}${t}</h3>${link || ""}</div>`;
   return `
-  <h2>${a.nome ? "Come va con " + esc(a.nome) : "Benvenuti in Accanto"}</h2>
-  <p class="lead">${a.nome ? `${a.nascita ? eta(a.nascita) + " anni · " : ""}La situazione di ${monthName(curMonth())} in un colpo d'occhio.` : `Iniziate dalla sezione Famiglia: inserite i dati della persona che assistete e i figli che dividono le spese.`}</p>
-  <div class="stack" style="margin-bottom:12px">
+  <h2>${a.nome ? "Oggi con " + esc(a.nome) : "Oggi"}</h2>
+  <div class="stack">
+  <div class="card">${titolo("pill", "Pastiglie", `<button type="button" class="btn link" data-go="salute" style="padding:0;min-height:36px">Vedi tutte</button>`)}${bloccoPastiglie(true)}</div>
+  <div class="card">${titolo("note", "Segna adesso")}${pulsantiDiario(["acqua","urine","stomia","pressione"])}</div>
+  <div class="card">${titolo("bell", "Da ricordare")}<div class="list">${allarmi.length ? allarmi.slice(0, 4).map(x => x.h).join("") : `<p class="small muted" style="margin:0">Niente in scadenza nei prossimi giorni.</p>`}</div></div>
+  <div class="row"><button type="button" class="btn ghost" data-scan style="flex:1">${icon("camera")}Fotografa un documento</button><button type="button" class="btn ghost" data-go="vicino" style="flex:1">${icon("pin")}Vicino a te</button></div>
+  ${S.config.questionario ? "" : `<div class="hero-card"><h3 style="margin:0">Non sapete da dove partire?</h3><p>15 domande veloci su come sta: Accanto vi dice che aiuto serve e cosa fare.</p><p><button type="button" class="btn" data-quiz>Rispondi (3 minuti)</button></p></div>`}
   ${installCard()}
-  <div class="card"><div class="row between" style="margin-bottom:6px"><h3 style="margin:0">${icon("pill").replace("<svg", '<svg style="width:22px;height:22px;vertical-align:-4px;margin-right:6px;color:var(--accent)"')}Pastiglie di oggi</h3><button type="button" class="btn link" data-go="salute" style="padding:0;min-height:36px">Tutte</button></div>${bloccoPastiglie(true)}</div>
-  <div class="card"><h3>Segna adesso</h3>${pulsantiDiario(["acqua","urine","stomia","pressione"])}<p style="margin:10px 0 0"><button type="button" class="btn link" data-go="salute" style="padding:0">Diario di oggi e altre voci</button></p></div>
-  ${S.config.questionario ? "" : `<div class="hero-card"><h3 style="margin:0">Prima di tutto: 15 domande, 3 minuti</h3><p>Rispondete insieme su come sta e cosa le serve. Accanto vi prepara il piano: che tipo di badante cercare, quanto costa, le pratiche da avviare e gli ausili utili.</p><p><button type="button" class="btn" data-quiz>Inizia le domande</button></p></div>`}
-  <div class="places">${[["Farmacia","farmacia","cross"],["Farmacia di turno","farmacia di turno","cross"],["Pronto soccorso","pronto soccorso ospedale","cross"]].map(([t,q,ic]) => `<a class="place" href="${esc(mapsUrl(q + (S.config.assistito?.indirizzo ? " vicino a " + S.config.assistito.indirizzo : " vicino a me")))}" target="_blank" rel="noopener">${icon(ic)}<div><b>${t}</b><span>La più vicina</span></div></a>`).join("")}<button type="button" class="place" data-go="vicino" style="text-align:left;font:inherit;cursor:pointer">${icon("pin")}<div><b>Altro vicino a te</b><span>Guardia medica, CAF, INPS, ASL</span></div></button></div>
-  <div class="card row between"><div style="flex:1;min-width:220px"><h3 style="margin:0 0 2px">Fotografa e archivia</h3><p class="small muted" style="margin:0">Documento, ricetta o scontrino: l'app legge il testo sul telefono, trova scadenza o totale e vi propone dove salvarlo.</p></div>${scanBtn("Scatta una foto")}</div>
-  </div>
-  <div class="grid2">
-    <div class="card"><h3>Spese di questo mese</h3><div class="big num">${eur(b.tot)}</div>
-      <p class="small muted" style="margin:4px 0 12px">${eur(b.daPensione)} pagati dal conto di ${esc(a.nome||"chi è assistito")} · ${eur(b.daCoprire)} da dividere tra i figli</p>
-      ${blocchiQuote(b, true)}
-      <p style="margin:12px 0 0"><button type="button" class="btn ghost" data-go="spese">Vedi il dettaglio</button></p></div>
-    <div class="card"><h3>Permessi 104 del mese</h3><div class="big num">${p.usati} <span class="muted" style="font-size:18px">di 3 giorni</span></div>
-      <div class="meter" style="margin:10px 0" role="img" aria-label="${p.usati} giorni usati su 3"><i style="width:${Math.min(100,p.usati/3*100)}%"></i></div>
-      <p class="small muted" style="margin:0 0 12px">I 3 giorni al mese si possono dividere tra più familiari che lavorano, ma il totale per la stessa persona assistita resta 3.</p>
-      <button type="button" class="btn ghost" data-add="permessi">Segna un permesso</button></div>
-  </div>
-  <h2 style="font-size:22px">Da tenere d'occhio</h2>
-  <p class="lead">Documenti che scadono entro 60 giorni, farmaci che stanno finendo e impegni delle prossime due settimane.</p>
-  <div class="list">${allarmi.length ? allarmi.map(x => x.h).join("") : empty("Niente in scadenza. Quando aggiungete documenti, farmaci e visite, gli avvisi compaiono qui.")}</div>`;
+  </div>`;
 }
 
 function vSpese(){
@@ -1241,20 +1236,20 @@ function vAiuti(){
 function vSalute(){
   const prossimi = S.agenda.filter(e => daysTo(e.data) >= 0).sort((a,b) => (a.data+(a.ora||"")) < (b.data+(b.ora||"")) ? -1 : 1);
   const passati = S.agenda.filter(e => daysTo(e.data) < 0).sort((a,b) => a.data < b.data ? 1 : -1).slice(0,5);
+  const seg = `<div class="seg" role="tablist" aria-label="Sezioni della salute" style="margin:6px 0 16px;width:100%;display:grid;grid-template-columns:repeat(4,1fr)">${[["pastiglie","Pastiglie"],["diario","Diario"],["farmaci","Farmaci"],["visite","Visite"]].map(([k,l]) => `<button type="button" role="tab" data-sal="${k}" aria-pressed="${saluteTab === k}">${l}</button>`).join("")}</div>`;
+  if (saluteTab === "diario") return `<h2>Salute</h2>${seg}<div class="card">${bloccoDiario()}</div>`;
+  if (saluteTab === "farmaci") return `<h2>Salute</h2>${seg}<div class="row between" style="margin-bottom:10px"><p class="small muted" style="margin:0">Dose, orari e quando finisce la scatola.</p>${addBtn("farmaci","Aggiungi")}</div>
+    <div class="list">${S.farmaci.length ? S.farmaci.map(f => { const n = f.finisce ? daysTo(f.finisce) : null; return item("farmaci", f, f.nome, [f.dose, oreDi(f).join(", "), f.orari, f.note].filter(Boolean).map(esc).join(" · "), n===null ? "" : pill(n<0?"Finito":n<=10?`Finisce tra ${n} gg`:"Scorta ok", n<=3?"bad":n<=10?"warn":"good")); }).join("") : empty("Aggiungete ogni farmaco con dose e orari: comparirà nelle pastiglie di ogni giorno.")}</div>`;
+  if (saluteTab === "visite") return `<h2>Salute</h2>${seg}<div class="row between" style="margin-bottom:10px"><p class="small muted" style="margin:0">Visite, analisi e turni, con chi se ne occupa.</p>${addBtn("agenda","Aggiungi")}</div>
+    <div class="list">${prossimi.length ? prossimi.map(e => item("agenda", e, e.titolo, `${fmtDate(e.data)}${e.ora?" alle "+esc(e.ora):""}${e.chi?" · "+esc(famName(e.chi)):" · <b>nessuno assegnato</b>"}`, pill(daysTo(e.data)===0?"Oggi":daysTo(e.data)===1?"Domani":`Tra ${daysTo(e.data)} gg`, daysTo(e.data)<=1?"warn":""))).join("") : empty("Nessuna visita in programma.")}</div>
+    ${passati.length ? `<h3 style="margin-top:20px" class="muted">Già passate</h3><div class="list">${passati.map(e => item("agenda", e, e.titolo, fmtDate(e.data) + (e.chi?" · "+esc(famName(e.chi)):""), "")).join("")}</div>` : ""}`;
   return `
-  <h2>Salute</h2>
-  <p class="lead">Pastiglie da spuntare, il diario di ogni giorno, i farmaci e le visite.</p>
+  <h2>Salute</h2>${seg}
   <div class="stack">
-  <div class="card"><h3>Pastiglie di oggi</h3>${bloccoPastiglie(false)}
+  <div class="card">${bloccoPastiglie(false)}
     ${S.farmaci.some(f => oreDi(f).length) ? `<div class="row" style="margin-top:14px">${local ? `<button type="button" class="btn ghost" data-calendario>${icon("calendar")}Promemoria nel calendario</button>` : ""}${"Notification" in window ? (avvisiAttivi() ? `<span class="pill good">Avvisi attivi con l'app aperta</span>` : `<button type="button" class="btn ghost" data-avvisi>${icon("bell")}Avvisi sul telefono</button>`) : ""}</div>
     <p class="small muted" style="margin:8px 0 0">Il calendario suona anche ad app chiusa: è il modo più sicuro per non dimenticare.</p>` : ""}</div>
-  <div class="card"><h3>Diario di ogni giorno</h3>${bloccoDiario()}</div>
-  </div>
-  <div class="row between" style="margin:24px 0 10px"><h3 style="margin:0">Farmaci</h3>${addBtn("farmaci","Aggiungi un farmaco")}</div>
-  <div class="list">${S.farmaci.length ? S.farmaci.map(f => { const n = f.finisce ? daysTo(f.finisce) : null; return item("farmaci", f, f.nome, [f.dose, oreDi(f).join(", "), f.orari, f.note].filter(Boolean).map(esc).join(" · "), n===null ? "" : pill(n<0?"Finito":n<=10?`Finisce tra ${n} gg`:"Scorta ok", n<=3?"bad":n<=10?"warn":"good")); }).join("") : empty("Segnate ogni farmaco con dose e orari: finisce anche nella Scheda SOS.")}</div>
-  <div class="row between" style="margin:24px 0 10px"><h3 style="margin:0">Prossimi impegni</h3>${addBtn("agenda","Aggiungi un impegno")}</div>
-  <div class="list">${prossimi.length ? prossimi.map(e => item("agenda", e, e.titolo, `${fmtDate(e.data)}${e.ora?" alle "+esc(e.ora):""} · ${esc(e.tipo||"")}${e.chi?" · se ne occupa "+esc(famName(e.chi)):" · <b>nessuno assegnato</b>"}`, pill(daysTo(e.data)===0?"Oggi":daysTo(e.data)===1?"Domani":`Tra ${daysTo(e.data)} gg`, daysTo(e.data)<=1?"warn":""))).join("") : empty("Visite, analisi, turni di assistenza: mettete chi se ne occupa, così non si scopre all'ultimo che non va nessuno.")}</div>
-  ${passati.length ? `<h3 style="margin-top:20px" class="muted">Ultimi passati</h3><div class="list">${passati.map(e => item("agenda", e, e.titolo, fmtDate(e.data) + (e.chi?" · "+esc(famName(e.chi)):""), "")).join("")}</div>` : ""}`;
+  </div>`;
 }
 
 function vFamiglia(){
@@ -1329,6 +1324,7 @@ $("#view").addEventListener("click", e => {
   if (ds) { ds.disabled = true; safe(() => store.set("assunzioni", ds.dataset.dose, {data: today(), farmaco: ds.dataset.f, ora: ds.dataset.o, alle: oraAdesso()})); return; }
   const da = e.target.closest("[data-dose-annulla]"); if (da) { safe(() => store.del("assunzioni", da.dataset.doseAnnulla)); return; }
   const dd = e.target.closest("[data-diario]"); if (dd) return apriDiario(dd.dataset.diario);
+  const sl = e.target.closest("[data-sal]"); if (sl) { saluteTab = sl.dataset.sal; return render(); }
   const gg = e.target.closest("[data-giorno]");
   if (gg) { const d = new Date((giornoDiario || today()) + "T12:00"); d.setDate(d.getDate() + Number(gg.dataset.giorno)); const s = d.toISOString().slice(0, 10); giornoDiario = s >= today() ? null : s; return render(); }
   if (e.target.closest("[data-riepilogo]")) return riepilogoMedico();
