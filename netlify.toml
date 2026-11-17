@@ -1,0 +1,13 @@
+[build]
+  publish = "."
+
+# Il service worker va sempre controllato, così gli aggiornamenti dell'app arrivano subito
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"

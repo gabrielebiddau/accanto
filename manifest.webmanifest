@@ -1,0 +1,16 @@
+{
+  "name": "Accanto",
+  "short_name": "Accanto",
+  "description": "Spese, documenti, medicine, badante e aiuti per chi assiste un familiare.",
+  "lang": "it",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#12443A",
+  "theme_color": "#F3F6F2",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

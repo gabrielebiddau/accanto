@@ -1,0 +1,1195 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#F3F6F2"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Accanto"><meta name="apple-mobile-web-app-status-bar-style" content="default"><style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px)}</style></head><body><title>Accanto</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: app da telefono per chi assiste un familiare. Colonna unica (max 860px), saluto in alto, menu con icone in basso a portata di pollice.
+   Mondo: verde cura + giallo "luce del mattino", testo grande e calmo. Un solo momento animato: l'apertura. */
+:root{
+  --bg:#F3F6F2; --surface:#FFFFFF; --ink:#18292A; --muted:#53645F; --line:#DAE2DB;
+  --accent:#1D6A57; --accent-ink:#FFFFFF; --accent-soft:#DDEEE6; --accent-deep:#12443A;
+  --sun:#E5B03F; --sun-soft:#FBEFD2; --sun-ink:#5C4205;
+  --warn:#8F5400; --warn-soft:#FFF0D6; --bad:#A8231B; --bad-soft:#FBE6E4; --good:#226828; --good-soft:#E3F2E3;
+  --shadow:0 1px 2px rgba(18,52,44,.05),0 8px 24px -14px rgba(18,52,44,.18);
+  --f-display:"Bricolage Grotesque","Avenir Next",system-ui,sans-serif;
+  --f-body:"Figtree","Segoe UI",system-ui,sans-serif;
+  --r:18px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0D1513; --surface:#16201E; --ink:#E5EEEA; --muted:#9BADA7; --line:#283633;
+  --accent:#62C6A7; --accent-ink:#06201A; --accent-soft:#1A3730; --accent-deep:#0A2620;
+  --sun:#F0C566; --sun-soft:#3A2F12; --sun-ink:#F6DDA0;
+  --warn:#F0B45C; --warn-soft:#3A2B10; --bad:#F2877F; --bad-soft:#3B1D1A; --good:#86CC89; --good-soft:#1C3220;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 24px -14px rgba(0,0,0,.6); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1513; --surface:#16201E; --ink:#E5EEEA; --muted:#9BADA7; --line:#283633;
+  --accent:#62C6A7; --accent-ink:#06201A; --accent-soft:#1A3730; --accent-deep:#0A2620;
+  --sun:#F0C566; --sun-soft:#3A2F12; --sun-ink:#F6DDA0;
+  --warn:#F0B45C; --warn-soft:#3A2B10; --bad:#F2877F; --bad-soft:#3B1D1A; --good:#86CC89; --good-soft:#1C3220;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 24px -14px rgba(0,0,0,.6); color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.5;caret-color:var(--accent);-webkit-tap-highlight-color:transparent}
+::selection{background:var(--sun-soft);color:var(--ink)}
+.wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 calc(110px + env(safe-area-inset-bottom,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:14px 12px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .mark{width:42px;height:42px;flex:none}
+.hello{flex:1;min-width:0}
+.hello p{margin:0;font-size:14px;color:var(--muted);font-weight:500}
+.hello h1{font-family:var(--f-display);font-size:22px;line-height:1.15;margin:0;letter-spacing:-.01em;text-wrap:balance;overflow-wrap:anywhere}
+.places{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+.place{display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;color:var(--ink);text-decoration:none;min-height:64px;box-shadow:var(--shadow)}
+.place:hover{border-color:var(--accent)}
+.place svg{width:26px;height:26px;color:var(--accent);flex:none}
+.place b{display:block;font-size:16.5px}
+.place span{font-size:14px;color:var(--muted)}
+.sos-box{display:flex;gap:14px;align-items:center;background:var(--bad-soft);color:var(--bad);border-radius:var(--r);padding:16px;flex-wrap:wrap}
+.sos-box .n{font-family:var(--f-display);font-size:40px;font-weight:700;line-height:1}
+.sos-box p{margin:0;font-size:15px;flex:1;min-width:200px;color:var(--ink)}
+.seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px;gap:4px;flex-wrap:wrap}
+.seg button{border:0;background:none;font:600 15px var(--f-body);color:var(--muted);padding:8px 14px;border-radius:999px;min-height:40px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.prof{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:8px;box-shadow:var(--shadow)}
+.prof h3{margin:0}
+.prof p{margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:13px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--bg);border:1px solid var(--line);color:var(--ink)}
+a.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+.sos{display:inline-flex;align-items:center;gap:6px;border:0;background:var(--bad-soft);color:var(--bad);font:700 15px var(--f-body);padding:0 14px;min-height:44px;border-radius:999px;cursor:pointer}
+.sos svg{width:18px;height:18px}
+.mark .arc{stroke:var(--sun)} .mark circle{fill:var(--accent)} .mark .b{stroke:var(--accent)}
+nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -8px 24px -18px rgba(18,52,44,.35);padding:6px max(8px,env(safe-area-inset-left,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-right,0px));display:flex;justify-content:center}
+nav.tabbar .in{display:grid;grid-template-columns:repeat(5,1fr);width:100%;max-width:560px}
+nav.tabbar button{display:grid;justify-items:center;gap:3px;background:none;border:0;color:var(--muted);font:600 12.5px var(--f-body);padding:4px 2px;min-height:56px;cursor:pointer;border-radius:14px}
+nav.tabbar .ic{display:grid;place-items:center;width:56px;height:32px;border-radius:999px}
+nav.tabbar svg{width:25px;height:25px}
+nav.tabbar button[aria-current="page"]{color:var(--accent)}
+nav.tabbar button[aria-current="page"] .ic{background:var(--accent-soft)}
+nav.tabbar button:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+.sheet-list{display:grid;gap:8px}
+.sheet-list button{display:flex;align-items:center;gap:14px;text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:14px;color:var(--ink);font:inherit;cursor:pointer;min-height:64px}
+.sheet-list svg{width:26px;height:26px;color:var(--accent);flex:none}
+.sheet-list b{display:block;font-size:17px}
+.sheet-list span{font-size:14px;color:var(--muted)}
+/* Apertura */
+#splash{position:fixed;inset:0;z-index:50;background:var(--accent-deep);color:#F4F8F5;display:grid;place-content:center;justify-items:center;gap:10px;text-align:center;padding:24px;clip-path:circle(150% at 50% 42%)}
+#splash .mark{width:104px;height:104px;margin-bottom:6px}
+#splash .mark circle{fill:#F4F8F5} #splash .mark .b{stroke:#F4F8F5}
+#splash .wm{font-family:var(--f-display);font-size:44px;font-weight:700;letter-spacing:-.02em;line-height:1}
+#splash p{margin:0;font-size:17px;color:#CFE3DA}
+#splash.out{clip-path:circle(0% at 50% 42%);transition:clip-path .6s cubic-bezier(.7,0,.84,0)}
+@media (prefers-reduced-motion:no-preference){
+  #splash .arc{stroke-dasharray:58;stroke-dashoffset:58;animation:draw 1s cubic-bezier(.16,1,.3,1) .15s forwards}
+  #splash circle,#splash .b{opacity:0;transform:translateY(5px) scale(.6);transform-box:fill-box;transform-origin:center bottom;animation:pop .6s cubic-bezier(.16,1,.3,1) .5s forwards}
+  #splash circle:nth-of-type(2),#splash .b:nth-of-type(3){animation-delay:.68s}
+  #splash .wm,#splash p{opacity:0;filter:blur(8px);transform:translateY(8px);animation:rise .8s cubic-bezier(.16,1,.3,1) .7s forwards}
+  #splash p{animation-delay:.85s}
+}
+@media (prefers-reduced-motion:reduce){#splash.out{clip-path:none;opacity:0;transition:opacity .2s}}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes pop{to{opacity:1;transform:none}}
+@keyframes rise{to{opacity:1;filter:none;transform:none}}
+/* Benvenuto */
+.welcome{display:grid;gap:18px;max-width:520px;margin:28px auto 0}
+.welcome .mark{width:72px;height:72px}
+.welcome h2{font-size:34px;margin:0}
+.welcome .lead{font-size:18px;margin:0}
+.welcome .note{display:flex;gap:10px;align-items:flex-start;background:var(--sun-soft);color:var(--sun-ink);border-radius:14px;padding:12px 14px;font-size:15px}
+.welcome .note svg{width:22px;height:22px;flex:none;margin-top:1px}
+.btn.big{min-height:56px;font-size:17px;border-radius:16px;width:100%}
+.btn.link{background:none;color:var(--accent);text-decoration:underline;text-underline-offset:3px;min-height:44px}
+.install{display:grid;gap:10px;background:var(--sun-soft);color:var(--sun-ink);border-radius:var(--r);padding:16px}
+.install h3{margin:0;color:inherit}
+.install p{margin:0;font-size:15px}
+.install svg{width:18px;height:18px;vertical-align:-3px}
+.btn svg{width:20px;height:20px;vertical-align:-4px;margin-right:6px}
+h2{font-family:var(--f-display);font-size:30px;line-height:1.12;margin:20px 0 6px;text-wrap:balance;letter-spacing:-.015em}
+h3{font-family:var(--f-display);font-size:19px;margin:0 0 10px}
+.lead{color:var(--muted);margin:0 0 16px;max-width:62ch}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow)}
+.stack{display:grid;gap:12px}
+.grid2{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.between{justify-content:space-between}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.num{font-variant-numeric:tabular-nums}
+.big{font-family:var(--f-display);font-size:32px;font-weight:700;line-height:1.1}
+.btn{border:0;background:var(--accent);color:var(--accent-ink);font:600 16px var(--f-body);padding:10px 18px;border-radius:14px;cursor:pointer;min-height:48px}
+.btn:hover{filter:brightness(1.06)}
+.btn:disabled{opacity:.5;cursor:default;filter:none}
+.btn.ghost{background:var(--surface);color:var(--accent);border:1px solid var(--line)}
+.btn.danger{background:var(--bad-soft);color:var(--bad)}
+.btn:focus-visible,.sos:focus-visible,.sheet-list button:focus-visible,.item:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.list{display:grid;gap:8px}
+.item{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;min-height:56px;cursor:pointer;text-align:left;width:100%;font:inherit;color:inherit}
+.item:hover{border-color:var(--accent)}
+.item .main{min-width:0;flex:1}
+.item .t{font-weight:600}
+.item .s{color:var(--muted);font-size:14px;overflow-wrap:anywhere}
+.pill{display:inline-block;font-size:13px;font-weight:600;padding:3px 10px;border-radius:999px;white-space:nowrap;background:var(--accent-soft);color:var(--accent)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.good{background:var(--good-soft);color:var(--good)}
+.pill.grey{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.empty{border:1px dashed var(--line);border-radius:12px;padding:18px;color:var(--muted);text-align:center}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);font-size:15px}
+th{color:var(--muted);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.05em}
+td.r,th.r{text-align:right}
+.tablebox{overflow-x:auto}
+.meter{height:10px;background:var(--bg);border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent)}
+.transfer{display:flex;gap:8px;align-items:center;padding:10px 12px;border-radius:10px;background:var(--accent-soft);font-weight:600;flex-wrap:wrap}
+.notice{padding:10px 14px;border-radius:10px;background:var(--warn-soft);color:var(--warn);font-size:14px;margin-top:12px}
+.check{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
+.check:last-child{border-bottom:0}
+.check .main{flex:1;min-width:0}
+.check select{max-width:130px}
+dialog{border:0;border-radius:16px;padding:0;width:min(560px,calc(100vw - 24px));background:var(--surface);color:var(--ink);max-height:calc(100vh - 32px)}
+dialog::backdrop{background:rgba(10,20,18,.45)}
+.dlg-head{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--surface);z-index:1}
+.dlg-body{padding:16px;display:grid;gap:12px}
+.dlg-foot{display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap;padding:0 16px 16px}
+label.f{display:grid;gap:4px;font-weight:600;font-size:14px}
+label.cb{display:flex;gap:8px;align-items:center;font-weight:500}
+input,select,textarea{font:16px var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;min-height:44px}
+input[type=checkbox]{width:22px;min-height:22px;height:22px;accent-color:var(--accent)}
+textarea{min-height:80px;resize:vertical}
+.sos-sheet{font-size:18px;line-height:1.55}
+.sos-sheet dt{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-top:10px}
+.sos-sheet dd{margin:0;font-weight:600;white-space:pre-wrap}
+.x{background:none;border:0;font-size:26px;color:var(--muted);cursor:pointer;min-width:44px;min-height:44px}
+.foot{margin-top:32px;font-size:13px;color:var(--muted)}
+.linkish{color:var(--accent);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.hero-card{background:var(--accent-deep);color:#F1F7F4;border-radius:var(--r);padding:20px;display:grid;gap:12px;box-shadow:var(--shadow)}
+.hero-card h3{color:#fff;font-size:21px}
+.hero-card .btn{background:var(--sun);color:#3A2A03}
+.hero-card p{margin:0}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;font:500 16px var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px;min-height:52px;cursor:pointer}
+.opt[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);font-weight:700}
+.opt:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.qq{font-family:var(--f-display);font-size:22px;line-height:1.25;margin:4px 0 6px;text-wrap:balance}
+.plan li{margin-bottom:8px}
+.plan ul{margin:0;padding-left:20px}
+.ai-out{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px;min-height:48px}
+.ai-out:empty{display:none}
+@media (prefers-reduced-motion:no-preference){.item{transition:border-color .15s}}
+</style>
+
+<div id="splash" aria-hidden="true">
+  <svg class="mark" viewBox="0 0 64 64" fill="none" stroke-width="5" stroke-linecap="round"><path class="arc" d="M13.75 36.25a18.25 18.25 0 0 1 36.5 0"/><circle cx="26.75" cy="37.5" r="4.25"/><path class="b" d="M19.5 51.25a7.25 7.25 0 0 1 14.5 0"/><circle cx="39.25" cy="40.25" r="3.25"/><path class="b" d="M34 51.25a5.25 5.25 0 0 1 10.5 0"/></svg>
+  <div class="wm">Accanto</div>
+  <p>La cura di famiglia, in un posto solo.</p>
+</div>
+<div class="wrap">
+  <header class="top" id="top">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 64 64" fill="none" stroke-width="5" stroke-linecap="round" aria-hidden="true"><path class="arc" d="M13.75 36.25a18.25 18.25 0 0 1 36.5 0"/><circle cx="26.75" cy="37.5" r="4.25"/><path class="b" d="M19.5 51.25a7.25 7.25 0 0 1 14.5 0"/><circle cx="39.25" cy="40.25" r="3.25"/><path class="b" d="M34 51.25a5.25 5.25 0 0 1 10.5 0"/></svg>
+      <div class="hello"><p id="helloDate"></p><h1 id="hello">Accanto</h1></div>
+      <button class="sos" id="sosBtn" type="button" aria-label="Apri la scheda SOS"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M10 4h4v6h6v4h-6v6h-4v-6H4v-4h6z"/></svg>SOS</button>
+    </div>
+  </header>
+  <main id="view"><p class="muted" style="margin-top:24px">Un attimo, preparo i vostri dati…</p></main>
+  <p class="foot">Le informazioni su 104, invalidità e agevolazioni sono indicative (aggiornate a novembre 2026): prima di presentare una domanda verificatele con un patronato o un CAF.</p>
+</div>
+<nav class="tabbar" id="tabs" aria-label="Sezioni"></nav>
+
+<dialog id="dlg"><form id="dlgForm" method="dialog"></form></dialog>
+<input type="file" id="scanInput" accept="image/*" capture="environment" hidden>
+<input type="file" id="restoreInput" accept="application/json,.json" hidden>
+
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const eur = n => new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR"}).format(Number(n)||0);
+const today = () => new Date().toISOString().slice(0,10);
+const curMonth = () => today().slice(0,7);
+const daysTo = d => Math.round((new Date(d+"T12:00") - new Date(today()+"T12:00"))/864e5);
+const fmtDate = d => d ? new Date(d+"T12:00").toLocaleDateString("it-IT",{day:"numeric",month:"short",year:"numeric"}) : "";
+const monthName = m => new Date(m+"-15T12:00").toLocaleDateString("it-IT",{month:"long",year:"numeric"});
+const num = v => Number(v)||0;
+
+/* ---------- Dati ---------- */
+const COLS = ["config","famiglia","spese","documenti","permessi","badanti","farmaci","agenda","profili"];
+const S = {config:{}, famiglia:[], spese:[], documenti:[], permessi:[], badanti:[], farmaci:[], agenda:[], profili:[]};
+let store, assets = null, loaded = false, offline = false, sample = null, canImg = false;
+
+function memoryStore(){
+  const data = {}, subs = {};
+  const emit = c => (subs[c]||[]).forEach(cb => cb(Object.entries(data[c]||{}).map(([id,v]) => ({id,...v}))));
+  return {
+    subscribe(c, cb){ (subs[c] ||= []).push(cb); emit(c); },
+    async add(c, v){ (data[c] ||= {})[Math.random().toString(36).slice(2)] = v; emit(c); },
+    async set(c, id, v){ (data[c] ||= {})[id] = v; emit(c); },
+    async del(c, id){ delete (data[c]||{})[id]; emit(c); }
+  };
+}
+/* App installata (fuori da Claude): i dati restano sul telefono, in IndexedDB */
+function idbOpen(){ return new Promise((ok, ko) => { const r = indexedDB.open("accanto", 1); r.onupgradeneeded = () => r.result.createObjectStore("kv"); r.onsuccess = () => ok(r.result); r.onerror = () => ko(r.error); }); }
+async function localStore(){
+  const db = await idbOpen();
+  const get = k => new Promise(ok => { const q = db.transaction("kv").objectStore("kv").get(k); q.onsuccess = () => ok(q.result || {}); q.onerror = () => ok({}); });
+  const put = (k, v) => new Promise((ok, ko) => { const t = db.transaction("kv", "readwrite"); t.objectStore("kv").put(v, k); t.oncomplete = ok; t.onerror = () => ko(t.error); });
+  const data = {}, subs = {};
+  for (const c of COLS) data[c] = await get(c);
+  const emit = c => (subs[c]||[]).forEach(cb => cb(Object.entries(data[c]).map(([id,v]) => ({id,...v}))));
+  const save = async c => { await put(c, data[c]); emit(c); };
+  return {
+    subscribe(c, cb){ (subs[c] ||= []).push(cb); emit(c); },
+    async add(c, v){ data[c][Date.now().toString(36) + Math.random().toString(36).slice(2, 8)] = v; await save(c); },
+    async set(c, id, v){ data[c][id] = v; await save(c); },
+    async del(c, id){ delete data[c][id]; await save(c); },
+    dump: () => JSON.parse(JSON.stringify(data)),
+    async load(obj){ for (const c of COLS) { data[c] = obj[c] && typeof obj[c] === "object" ? obj[c] : {}; await save(c); } }
+  };
+}
+/* Bacheca badanti online (Supabase). Solo i profili delle badanti vanno online: i dati della famiglia restano sul telefono.
+   La chiave è "publishable": la tabella è protetta da regole, e ogni profilo si modifica solo con la sua chiave segreta. */
+const SB_URL = "https://edvtdzgakphfsxvrmcwb.supabase.co", SB_KEY = "sb_publishable_XiX7S7AMNrqCp9F29dauDA_2HiKtvFN";
+let bachecaOnline = null;
+async function sbFetch(path, opts = {}){
+  const r = await fetch(SB_URL + path, {...opts, headers: {apikey: SB_KEY, "Content-Type": "application/json"}});
+  const t = await r.text();
+  if (!r.ok) throw new Error(t);
+  return t ? JSON.parse(t) : null;
+}
+const hex = n => Array.from(crypto.getRandomValues(new Uint8Array(n)), b => b.toString(16).padStart(2, "0")).join("");
+const uuid = () => crypto.randomUUID ? crypto.randomUUID() : hex(16).replace(/^(.{8})(.{4}).(.{3}).(.{3})(.{12})$/, "$1-$2-4$3-a$4-$5");
+function tokenProfilo(){
+  let t = null; try { t = localStorage.getItem("accanto-profilo-token"); } catch {}
+  if (!t) { t = hex(24); try { localStorage.setItem("accanto-profilo-token", t); } catch {} }
+  return t;
+}
+function conBacheca(base){
+  let remoti = [], locali = [];
+  const subs = [];
+  const emit = () => { const ids = new Set(remoti.map(r => r.id)); subs.forEach(cb => cb([...remoti, ...locali.filter(l => !ids.has(l.id))])); };
+  const aggiorna = async () => {
+    try { remoti = (await sbFetch("/rest/v1/profili_badanti?select=id,dati&order=aggiornato.desc&limit=500")).map(r => ({...r.dati, id: r.id})); bachecaOnline = true; }
+    catch { bachecaOnline = false; }
+    emit();
+  };
+  base.subscribe("profili", rows => { locali = rows; emit(); });
+  return {...base,
+    subscribe(c, cb){ if (c !== "profili") return base.subscribe(c, cb); subs.push(cb); emit(); aggiorna(); },
+    async set(c, id, v){
+      if (c !== "profili") return base.set(c, id, v);
+      await sbFetch("/rest/v1/rpc/salva_profilo", {method: "POST", body: JSON.stringify({p_id: id, p_token: tokenProfilo(), p_dati: v})});
+      await base.set(c, id, v); await aggiorna();
+    },
+    async del(c, id){
+      if (c !== "profili") return base.del(c, id);
+      await sbFetch("/rest/v1/rpc/elimina_profilo", {method: "POST", body: JSON.stringify({p_id: id, p_token: tokenProfilo()})});
+      await base.del(c, id); await aggiorna();
+    }
+  };
+}
+function rimpicciolisci(file, max, type, q){
+  return createImageBitmap(file).then(img => {
+    const k = Math.min(1, max / Math.max(img.width, img.height));
+    const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+    c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+    return new Promise(r => c.toBlob(r, type, q));
+  });
+}
+const localAssets = {
+  async upload(file){
+    if (!file.type.startsWith("image/")) throw new Error("solo immagini");
+    const blob = await rimpicciolisci(file, 1400, "image/jpeg", 0.8);
+    const url = await new Promise((ok, ko) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = ko; r.readAsDataURL(blob); });
+    return {id: "", url};
+  }
+};
+let local = false;
+function dbStore(db){
+  return {
+    subscribe(c, cb, err){ db.collection(c).onSnapshot(s => cb(s.docs.map(d => ({id:d.id, ...d.data()})), s.metadata), err); },
+    add: (c, v) => db.collection(c).add(v),
+    set: (c, id, v) => db.collection(c).doc(id).set(v),
+    del: (c, id) => db.collection(c).doc(id).delete()
+  };
+}
+function attach(){
+  COLS.forEach(c => store.subscribe(c, (rows, meta) => {
+    if (c === "config") { S.config = {}; rows.forEach(r => S.config[r.id] = r); }
+    else S[c] = rows;
+    if (!meta || !meta.fromCache) loaded = true;
+    render();
+  }, () => { offline = true; render(); }));
+}
+function apertura(){
+  const sp = $("#splash"); if (!sp) return;
+  let visto = false; try { visto = sessionStorage.getItem("accanto-aperta") === "1"; sessionStorage.setItem("accanto-aperta", "1"); } catch {}
+  const ridotto = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (visto) return sp.remove();
+  setTimeout(() => { sp.classList.add("out"); setTimeout(() => sp.remove(), 700); }, ridotto ? 500 : 1700);
+}
+async function boot(){
+  apertura();
+  let db = null;
+  try { db = window.claude ? await window.claude.use("db") : null; } catch { db = null; }
+  try { assets = window.claude ? await window.claude.use("assets") : null; } catch { assets = null; }
+  try { sample = window.claude ? await window.claude.use("sample") : null; canImg = !!(sample && (await sample.limits()).images); } catch { canImg = false; }
+  if (db) { store = dbStore(db); setTimeout(() => { if (!loaded) { offline = true; render(); } }, 10000); }
+  else if (!window.claude) {
+    try { store = conBacheca(await localStore()); local = true; assets = localAssets; try { navigator.storage?.persist?.(); } catch {} }
+    catch { store = memoryStore(); offline = "prova"; }
+    loaded = true;
+    if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) navigator.serviceWorker.register("sw.js").catch(() => {});
+  }
+  else { store = memoryStore(); offline = "prova"; loaded = true; }
+  attach(); render();
+}
+
+/* ---------- Calcoli ---------- */
+const famName = id => id === "assistito" ? "Conto di " + (S.config.assistito?.nome || "assistito") : (S.famiglia.find(f => f.id === id)?.nome || "—");
+function speseDelMese(m){ return S.spese.filter(s => s.data && (s.ricorrente ? s.data.slice(0,7) <= m : s.data.slice(0,7) === m)); }
+function bilancio(m){
+  const list = speseDelMese(m);
+  const tot = list.reduce((a,s) => a + num(s.importo), 0);
+  const daPensione = list.filter(s => s.pagatoDa === "assistito").reduce((a,s) => a + num(s.importo), 0);
+  const daCoprire = tot - daPensione;
+  const fam = S.famiglia;
+  const qsum = fam.reduce((a,f) => a + num(f.quota), 0);
+  const righe = fam.map(f => {
+    const q = qsum > 0 ? num(f.quota)/qsum : 1/fam.length;
+    const dovuto = daCoprire * q;
+    const pagato = list.filter(s => s.pagatoDa === f.id).reduce((a,s) => a + num(s.importo), 0);
+    return {f, q, dovuto, pagato, saldo: pagato - dovuto};
+  });
+  const deb = righe.filter(r => r.saldo < -0.5).map(r => ({n:r.f.nome, v:-r.saldo}));
+  const cre = righe.filter(r => r.saldo > 0.5).map(r => ({n:r.f.nome, v:r.saldo}));
+  const giri = [];
+  let i = 0, j = 0;
+  while (i < deb.length && j < cre.length) {
+    const v = Math.min(deb[i].v, cre[j].v);
+    giri.push({da:deb[i].n, a:cre[j].n, v});
+    deb[i].v -= v; cre[j].v -= v;
+    if (deb[i].v < 0.5) i++; if (cre[j].v < 0.5) j++;
+  }
+  const entrate = num(S.config.assistito?.pensione) + num(S.config.assistito?.accompagnamento) + num(S.config.assistito?.altreEntrate);
+  return {list, tot, daPensione, daCoprire, righe, giri, entrate};
+}
+function statoDoc(d){
+  if (!d.scadenza) return ["Senza scadenza","grey"];
+  const n = daysTo(d.scadenza);
+  if (n < 0) return ["Scaduto","bad"];
+  if (n <= 60) return [n === 0 ? "Scade oggi" : `Scade tra ${n} giorni`,"warn"];
+  return ["Valido fino al " + fmtDate(d.scadenza),"good"];
+}
+function costoBadante(c){
+  const s = num(c.stipendio), contr = num(c.contributi);
+  const tred = s/12, tfr = s*13/13.5/12;
+  return {s, contr, tred, tfr, tot: s + contr + tred + tfr};
+}
+const REQ = {demenza:"Esperienza con demenza o Alzheimer", mobilizza:"Sa spostare una persona allettata o in carrozzina", notte:"Disponibile a svegliarsi di notte", glicemia:"Sa misurare la glicemia e fare l'insulina", piaghe:"Sa prevenire e medicare le piaghe", patente:"Ha la patente e guida", dialetto:"Capisce il sardo o il dialetto", animali:"Nessun problema con gli animali", pazienza:"Molto paziente con chi è diffidente (voto pazienza 4 o 5)"};
+const VOTI = [["pazienza","Pazienza e modi"],["esperienza_v","Esperienza con anziani"],["affidabilita","Affidabilità"],["cucina","Cucina e casa"],["italiano","Si capisce bene"]];
+function punteggio(b){ const v = VOTI.map(([k]) => num(b[k])).filter(Boolean); const m = v.length ? v.reduce((a,x)=>a+x,0)/v.length : 0; return Math.round((m + (b.referenze ? .5 : 0))*10)/10; }
+function permessiMese(m){
+  const rows = S.permessi.filter(p => (p.data||"").slice(0,7) === m);
+  const usati = rows.reduce((a,p) => a + num(p.giorni), 0);
+  return {rows, usati};
+}
+function eta(d){ if(!d) return ""; const b = new Date(d), t = new Date(); let a = t.getFullYear()-b.getFullYear(); if (t < new Date(t.getFullYear(), b.getMonth(), b.getDate())) a--; return a; }
+
+/* ---------- Schemi dei moduli ---------- */
+const famOpts = (withAss) => [["","— scegli —"], ...(withAss ? [["assistito", famName("assistito")]] : []), ...S.famiglia.map(f => [f.id, f.nome])];
+const SCHEMI = {
+  famiglia:{titolo:"Familiare", campi:[["nome","Nome","text",{req:1}],["ruolo","Ruolo","text",{ph:"Figlia, nipote, genero…"}],["telefono","Telefono","tel"],["quota","Quota delle spese (%)","number",{ph:"Lascia vuoto per dividere in parti uguali"}]]},
+  spese:{titolo:"Spesa", campi:[["descrizione","Che spesa è","text",{req:1,ph:"Stipendio badante, farmacia…"}],["importo","Importo (€)","number",{req:1,step:"0.01"}],["categoria","Categoria","select",{opts:["Badante","Farmaci","Visite e cure","Casa e bollette","Spesa alimentare","Ausili","Trasporti","Altro"]}],["data","Data","date",{req:1,def:today}],["pagatoDa","Chi l'ha pagata","select",{opts:()=>famOpts(true),req:1}],["ricorrente","Si ripete ogni mese","checkbox"]]},
+  documenti:{titolo:"Documento", campi:[["nome","Documento","text",{req:1,ph:"Carta d'identità, verbale 104…"}],["tipo","Tipo","select",{opts:["Identità","Sanità","Invalidità e 104","Pensione e INPS","Fisco e ISEE","Casa","Banca","Altro"]}],["scadenza","Scadenza","date"],["dove","Dove si trova l'originale","text",{ph:"Cartellina blu, cassetto cucina"}],["note","Note","textarea"],["foto","Foto o PDF","file"]]},
+  permessi:{titolo:"Permesso 104", campi:[["chi","Chi ha usato il permesso","select",{opts:()=>famOpts(false),req:1}],["data","Giorno","date",{req:1,def:today}],["giorni","Giorni","number",{def:()=>"1",step:"0.5"}],["note","Per cosa","text",{ph:"Visita geriatra"}]]},
+  badanti:{titolo:"Candidata/o", campi:[["nome","Nome","text",{req:1}],["telefono","Telefono","tel"],["stato","A che punto siamo","select",{opts:["Da sentire","Colloquio fissato","In prova","Scelta","Scartata"]}],["formula","Formula","select",{opts:["Convivente","Non convivente","A ore","Notte"]}],["esperienza","Anni di esperienza","number"],["stipendio","Stipendio richiesto (€/mese)","number"],["referenze","Referenze verificate","checkbox"],["patente","Ha la patente","checkbox"],...["demenza","mobilizza","notte","glicemia","piaghe","dialetto","animali"].map(k => ["r_"+k, REQ[k], "checkbox"]),...VOTI.map(([k,l]) => [k, l+" (1-5)","select",{opts:[["","—"],["1","1"],["2","2"],["3","3"],["4","4"],["5","5"]]}]),["note","Note dal colloquio","textarea"]]},
+  profili:{titolo:"Il tuo profilo da badante", campi:[["nome","Nome","text",{req:1}],["zona","Dove lavori (comune o quartiere)","text",{req:1,ph:"Carbonia, Iglesias e dintorni"}],["telefono","Telefono","tel",{req:1}],["whatsapp","Mi trovate anche su WhatsApp","checkbox",{def:()=>true}],["formula","Che lavoro cerchi","select",{opts:["Convivente","Non convivente","A ore","Notte","Va bene tutto"]}],["esperienza","Anni di esperienza","number"],["disponibile","Disponibile dal","date"],["tariffa","Stipendio o tariffa che chiedi","text",{ph:"Per esempio 1.100 € al mese o 9 € l'ora"}],["lingue","Lingue che parli","text",{ph:"Italiano, rumeno, un po' di sardo"}],["patente","Ho la patente","checkbox"],...["demenza","mobilizza","notte","glicemia","piaghe","dialetto","animali"].map(k => ["r_"+k, REQ[k], "checkbox"]),["presentazione","Presentati in poche righe","textarea",{ph:"Chi sei, con chi hai lavorato, cosa sai fare bene"}],["visibile","Mostra il mio profilo alle famiglie","checkbox",{def:()=>true}],["consenso","Accetto che nome, zona, telefono e profilo siano visibili alle famiglie che usano Accanto","checkbox",{req:1}]]},
+  farmaci:{titolo:"Farmaco", campi:[["nome","Farmaco","text",{req:1}],["dose","Dose","text",{ph:"1 compressa"}],["orari","Quando","text",{ph:"8:00 e 20:00, dopo i pasti"}],["finisce","La scatola finisce il","date"],["note","Note","text",{ph:"Serve ricetta del medico"}]]},
+  agenda:{titolo:"Impegno", campi:[["titolo","Cosa","text",{req:1}],["tipo","Tipo","select",{opts:["Visita medica","Turno di assistenza","Pratica o ufficio","Altro"]}],["data","Giorno","date",{req:1,def:today}],["ora","Ora","time"],["chi","Chi se ne occupa","select",{opts:()=>famOpts(false)}],["note","Note","text"]]},
+  "config/assistito":{titolo:"Dati della persona assistita", campi:[["nome","Nome","text",{req:1}],["nascita","Data di nascita","date"],["indirizzo","Indirizzo","text"],["medico","Medico di base","text"],["medicoTel","Telefono del medico","tel"],["emergenza","Contatto di emergenza","text",{ph:"Laura 333 1234567"}],["allergie","Allergie","textarea"],["patologie","Patologie e note mediche","textarea"],["pensione","Pensione mensile (€)","number"],["accompagnamento","Indennità di accompagnamento (€/mese)","number"],["altreEntrate","Altre entrate mensili (€)","number"]]},
+  "config/contratto":{titolo:"Contratto della badante", campi:[["nome","Nome della badante","text"],["livello","Livello CCNL","select",{opts:["CS - convivente, persona non autosufficiente","BS - convivente, persona autosufficiente","DS - con titolo o diploma","Non convivente a ore","Altro"]}],["oreSettimana","Ore a settimana","number"],["stipendio","Stipendio mensile (€)","number"],["contributi","Contributi INPS al mese (€)","number",{ph:"Vedi il bollettino trimestrale ÷ 3"}],["inizio","Inizio contratto","date"],["riposo","Riposi","text",{ph:"Domenica + giovedì pomeriggio"}]]}
+};
+
+/* ---------- Modale ---------- */
+const dlg = $("#dlg"), form = $("#dlgForm");
+function openForm(key, rec, prefill, pendingFile){
+  const sc = SCHEMI[key]; const isCfg = key.startsWith("config/");
+  rec = rec || (isCfg ? S.config[key.slice(7)] : null) || null;
+  const v = rec || prefill || {};
+  form.onclick = null;
+  const fields = sc.campi.map(([k,l,t,o={}]) => {
+    if (t === "file") return assets ? `<label class="f">${l}<input id="f_${k}" name="${k}" type="file" accept="${local ? "image/*" : "image/*,application/pdf"}">${pendingFile ? `<span class="small muted">La foto appena scattata viene allegata.</span>` : v.foto ? `<span class="small muted">File già allegato. Sceglietene un altro solo per sostituirlo.</span>` : ""}</label>` : "";
+    const val = v[k] ?? (o.def ? o.def() : "");
+    if (t === "checkbox") return `<label class="cb"><input id="f_${k}" name="${k}" type="checkbox" ${val ? "checked" : ""} ${o.req ? "required" : ""}> ${l}</label>`;
+    if (t === "textarea") return `<label class="f">${l}<textarea id="f_${k}" name="${k}" placeholder="${esc(o.ph||"")}">${esc(val)}</textarea></label>`;
+    if (t === "select") {
+      let opts = typeof o.opts === "function" ? o.opts() : o.opts;
+      opts = opts.map(x => Array.isArray(x) ? x : [x,x]);
+      return `<label class="f">${l}<select id="f_${k}" name="${k}" ${o.req ? "required" : ""}>${opts.map(([a,b]) => `<option value="${esc(a)}" ${String(val)===String(a)?"selected":""}>${esc(b)}</option>`).join("")}</select></label>`;
+    }
+    return `<label class="f">${l}<input id="f_${k}" name="${k}" type="${t}" ${o.step?`step="${o.step}"`:""} ${t==="number"&&!o.step?'step="any"':""} value="${esc(val)}" placeholder="${esc(o.ph||"")}" ${o.req?"required":""}></label>`;
+  }).join("");
+  form.innerHTML = `<div class="dlg-head"><h3 style="margin:0">${isCfg || rec ? "" : prefill ? "Controlla e salva · " : "Aggiungi · "}${esc(sc.titolo)}</h3><button type="button" class="x" id="dlgClose" aria-label="Chiudi">×</button></div>
+    <div class="dlg-body">${fields}<p id="dlgErr" class="small" style="color:var(--bad);margin:0" hidden></p></div>
+    <div class="dlg-foot"><div>${rec && !isCfg ? '<button type="button" class="btn danger" id="dlgDel">Elimina</button>' : ""}</div><button class="btn" type="submit" id="dlgSave">Salva</button></div>`;
+  $("#dlgClose").onclick = () => dlg.close();
+  const del = $("#dlgDel");
+  if (del) del.onclick = async () => {
+    if (del.dataset.sure) { await safe(() => store.del(key, rec.id)); dlg.close(); }
+    else { del.dataset.sure = 1; del.textContent = "Tocca ancora per eliminare"; }
+  };
+  form.onsubmit = async e => {
+    e.preventDefault();
+    const out = {};
+    for (const [k,,t] of sc.campi) {
+      const el = form.querySelector(`[name="${k}"]`);
+      if (!el) { if (v[k] !== undefined) out[k] = v[k]; continue; }
+      if (t === "checkbox") out[k] = el.checked;
+      else if (t === "file") { out.foto = v.foto || ""; out.fotoId = v.fotoId || ""; const f = el.files[0] || pendingFile; if (f) {
+        $("#dlgSave").textContent = "Carico il file…";
+        try { const r = await assets.upload(f); out.foto = r.url; out.fotoId = r.id; }
+        catch { showErr("Il file non si è caricato. Prova con una foto più piccola (massimo 20 MB)."); $("#dlgSave").textContent = "Salva"; return; }
+      } }
+      else out[k] = el.value.trim();
+    }
+    const ok = await safe(() => isCfg ? store.set("config", key.slice(7), out) : rec ? store.set(key, rec.id, out) : store.add(key, out));
+    if (ok) dlg.close(); else showErr("Non sono riuscito a salvare. Controlla di avere il permesso di modifica e riprova.");
+  };
+  if (!dlg.open) dlg.showModal();
+}
+function showMsg(title, body, foot = ""){
+  form.onsubmit = e => e.preventDefault(); form.onclick = null;
+  form.innerHTML = `<div class="dlg-head"><h3 style="margin:0">${esc(title)}</h3><button type="button" class="x" id="dlgClose" aria-label="Chiudi">×</button></div><div class="dlg-body">${body}</div>${foot ? `<div class="dlg-foot">${foot}</div>` : ""}`;
+  $("#dlgClose").onclick = () => dlg.close();
+  if (!dlg.open) dlg.showModal();
+}
+function errText(code){
+  return ({not_granted:"Serve il permesso per far leggere le cose a Claude. Potete sempre inserire tutto a mano.",
+    image_rejected:"Questa foto non va bene. Provate con una foto JPG o PNG, non un PDF.",
+    rate_limited:"Troppe richieste in poco tempo. Riprovate tra qualche minuto.",
+    session_expired:"Dovete accedere di nuovo a Claude.",
+    sampling_disabled:"Claude non è disponibile su questo account."})[code] || "Non ci sono riuscito. Riprovate con una foto più nitida: documento intero, ben illuminato, senza riflessi.";
+}
+
+/* ---------- Lettura con la fotocamera ---------- */
+const TIPI_DOC = ["Identità","Sanità","Invalidità e 104","Pensione e INPS","Fisco e ISEE","Casa","Banca","Altro"];
+const CAT_SPESA = ["Badante","Farmaci","Visite e cure","Casa e bollette","Spesa alimentare","Ausili","Trasporti","Altro"];
+const isDate = d => /^\d{4}-\d{2}-\d{2}$/.test(d || "");
+const scanInput = $("#scanInput");
+function startScan(){ scanInput.value = ""; scanInput.click(); }
+/* Lettura sul telefono, senza Claude: OCR Tesseract + regole per i documenti italiani */
+const OCR_V = "5.1.1";
+let ocrWorker = null, ocrProg = null;
+function loadScript(src){ return new Promise((ok, ko) => { if (window.Tesseract) return ok(); const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = ko; document.head.appendChild(s); }); }
+async function getOcr(){
+  if (ocrWorker) return ocrWorker;
+  await loadScript(`https://cdn.jsdelivr.net/npm/tesseract.js@${OCR_V}/dist/tesseract.min.js`);
+  // La lingua italiana è pubblicata accanto alla pagina come ocr/ita-traineddata.wasm (i .gz non vengono serviti):
+  // il worker riscrive l'indirizzo che Tesseract chiede.
+  const src = `const f = self.fetch.bind(self); self.fetch = (u, o) => f(String(u).replace(/ita\\.traineddata(\\.gz)?$/, "ita-traineddata.wasm"), o);
+importScripts("https://cdn.jsdelivr.net/npm/tesseract.js@${OCR_V}/dist/worker.min.js");`;
+  ocrWorker = await Tesseract.createWorker("ita", 1, {
+    workerPath: URL.createObjectURL(new Blob([src], {type: "application/javascript"})),
+    workerBlobURL: false,
+    corePath: `https://cdn.jsdelivr.net/npm/tesseract.js-core@${OCR_V}`,
+    langPath: new URL("ocr", location.href).href,
+    cacheMethod: "none",
+    logger: m => ocrProg && ocrProg(m)
+  });
+  return ocrWorker;
+}
+async function prepara(file){
+  const img = await createImageBitmap(file);
+  const k = Math.min(1, 2000 / Math.max(img.width, img.height));
+  const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+  const g = c.getContext("2d"); g.filter = "grayscale(1) contrast(1.4)"; g.drawImage(img, 0, 0, c.width, c.height);
+  return new Promise(r => c.toBlob(r, "image/png"));
+}
+function leggiTesto(raw){
+  const T = raw.toUpperCase().replace(/[ \t]+/g, " ");
+  const has = re => re.test(T);
+  const tipi = [
+    [/CARTA D.?IDENTIT|IDENTITY CARD/, "Carta d'identità", "Identità", "documento"],
+    [/TESSERA SANITARIA|TESSERA EUROPEA/, "Tessera sanitaria", "Sanità", "documento"],
+    [/PASSAPORTO|PASSPORT/, "Passaporto", "Identità", "documento"],
+    [/PATENTE DI GUIDA|DRIVING LICEN/, "Patente di guida", "Identità", "documento"],
+    [/VERBALE[\s\S]*(INVALIDIT|HANDICAP|104)|LEGGE 104|L\. ?104/, "Verbale invalidità e 104", "Invalidità e 104", "documento"],
+    [/PIANO TERAPEUTICO/, "Piano terapeutico", "Sanità", "ricetta"],
+    [/RICETTA|PRESCRIZIONE|SERVIZIO SANITARIO NAZIONALE/, "Ricetta medica", "Sanità", "ricetta"],
+    [/ESENZIONE/, "Esenzione ticket", "Sanità", "documento"],
+    [/\bISEE\b|\bDSU\b/, "Attestazione ISEE", "Fisco e ISEE", "documento"],
+    [/CEDOLINO|PENSIONE/, "Cedolino della pensione", "Pensione e INPS", "documento"],
+    [/DOCUMENTO COMMERCIALE|SCONTRINO|TOTALE COMPLESSIVO|\bP\.? ?IVA\b|FATTURA/, "Scontrino", "Altro", "scontrino"]
+  ];
+  const m = tipi.find(([re]) => has(re)) || [null, "", "Altro", "altro"];
+  const [, nomeDoc, tipo] = m; let genere = m[3];
+  // date
+  const date = [];
+  for (const x of T.matchAll(/\b(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4}|\d{2})\b/g)) {
+    let [, d, mo, y] = x; d = +d; mo = +mo; y = +y; if (y < 100) y += y < 50 ? 2000 : 1900;
+    if (d >= 1 && d <= 31 && mo >= 1 && mo <= 12 && y > 1900 && y < 2100) date.push({iso: `${y}-${String(mo).padStart(2,"0")}-${String(d).padStart(2,"0")}`, at: x.index});
+  }
+  let scadenza = "";
+  for (const kw of T.matchAll(/SCADENZA|SCAD\b|SCADE|EXPIRY|VALID[AO]? FINO|VALIDIT|REVISIONE/g)) {
+    const dopo = date.find(d => d.at > kw.index && d.at - kw.index < 80);
+    if (dopo) { scadenza = dopo.iso; break; }
+  }
+  if (!scadenza && /Identità|Sanità/.test(tipo) && genere === "documento") scadenza = date.map(d => d.iso).filter(d => d > today()).sort().pop() || "";
+  // dati utili
+  const note = [];
+  const cf = T.replace(/ /g, "").match(/[A-Z]{6}\d{2}[A-EHLMPR-T]\d{2}[A-Z]\d{3}[A-Z]/); if (cf) note.push("Codice fiscale " + cf[0]);
+  const cie = T.match(/\b[A-Z]{2}\d{5}[A-Z]{2}\b/); if (cie && nomeDoc === "Carta d'identità") note.push("Numero " + cie[0]);
+  const perc = T.match(/\b(\d{2,3}) ?%/); if (perc && tipo === "Invalidità e 104") note.push("Invalidità " + perc[1] + "%");
+  if (/ART\.? ?3,? ?C(OMMA)?\.? ?3/.test(T)) note.push("104 art. 3 comma 3 (grave)");
+  // importo
+  const soldi = s => [...s.matchAll(/(\d{1,4}(?:\.\d{3})*,\d{2}|\d{1,4}\.\d{2})\b/g)].map(x => +x[1].replace(/\.(?=\d{3})/g, "").replace(",", "."));
+  const righe = T.split(/\n/);
+  let importo = 0;
+  const rTot = righe.find(r => /TOTALE|IMPORTO PAGATO|DA PAGARE|TOT\./.test(r) && soldi(r).length);
+  if (rTot) importo = Math.max(...soldi(rTot));
+  if (genere === "scontrino" && !importo) importo = Math.max(0, ...soldi(T));
+  if (!m[0] && importo) genere = "scontrino";
+  const cat = /FARMACIA|PARAFARMACIA/.test(T) ? "Farmaci" : /CONAD|EUROSPIN|COOP|LIDL|CARREFOUR|DESPAR|MD |PENNY|SUPERMERCATO|ALIMENTARI/.test(T) ? "Spesa alimentare" : /ENEL|ABBANOA|BOLLETTA|LUCE|GAS\b/.test(T) ? "Casa e bollette" : /SANITARI|ORTOPEDI/.test(T) ? "Ausili" : "Altro";
+  const insegna = (righe.find(r => /[A-Z]{3,}/.test(r) && r.trim().length > 3) || "Scontrino").trim().slice(0, 40);
+  // farmaci (righe con un dosaggio)
+  const farmaci = genere === "ricetta" ? righe.filter(r => /\b\d+(?:[.,]\d+)? ?(MG|MCG|UI|ML|G)\b/.test(r) && /[A-Z]{4,}/.test(r)).slice(0, 6).map(r => ({nome: r.trim().replace(/\s+/g, " ").toLowerCase().replace(/^\w/, c => c.toUpperCase()).slice(0, 60), dose: "", orari: ""})) : [];
+  const nome = nomeDoc || "";
+  const riassunto = genere === "scontrino" ? `Sembra uno scontrino${importo ? " da " + eur(importo) : ""}.` : nome ? `Sembra: ${nome.toLowerCase()}.${scadenza ? " Scadenza trovata: " + fmtDate(scadenza) + "." : " Non ho trovato una scadenza."}` : "Non ho riconosciuto il tipo di documento: potete salvarlo lo stesso e scegliere il tipo a mano.";
+  return {genere, riassunto,
+    documento: genere === "scontrino" ? {} : {nome: nome || "Documento", tipo, scadenza, note: note.join(" · ")},
+    farmaci,
+    spesa: genere === "scontrino" ? {descrizione: insegna, importo, data: date[0]?.iso || today(), categoria: cat} : {}};
+}
+scanInput.onchange = async () => {
+  const file = scanInput.files[0]; if (!file) return;
+  showMsg("Sto leggendo la foto…", `<p style="margin:0" id="ocrStato">Preparo la lettura. La prima volta scarica il lettore (circa 6 MB), poi è più veloce.</p><div class="meter"><i id="ocrBar" style="width:5%"></i></div><p class="small muted" style="margin:0">La foto viene letta qui sul telefono e non viene mandata a nessuno.</p>`);
+  ocrProg = m => { const bar = $("#ocrBar"), st = $("#ocrStato"); if (!bar) return;
+    if (m.status === "recognizing text") { bar.style.width = Math.round(10 + m.progress * 90) + "%"; st.textContent = "Leggo il testo…"; }
+    else if (/load|initializ/.test(m.status)) st.textContent = "Preparo il lettore…"; };
+  try {
+    const w = await getOcr();
+    const {data} = await w.recognize(await prepara(file));
+    const raw = (data.text || "").trim();
+    reviewScan(raw.length > 15 ? leggiTesto(raw) : {riassunto: "Non sono riuscito a leggere il testo."}, file, raw);
+  } catch (e) {
+    console.warn(e);
+    showMsg("Lettura non riuscita", `<p style="margin:0">Il lettore del telefono non è partito.${canImg ? " Potete provare la lettura con Claude." : " Inserite il documento a mano."}</p>`, canImg ? `<span></span><button type="button" class="btn" id="scAi">Leggi con Claude</button>` : "");
+    if (canImg) $("#scAi").onclick = () => leggiConClaude(file);
+  }
+};
+async function leggiConClaude(file){
+  showMsg("Claude sta leggendo la foto…", `<p style="margin:0">Di solito ci vogliono 10-30 secondi.</p><p class="small muted" style="margin:0">La prima volta vi viene chiesto il permesso di mandare la foto a Claude.</p>`);
+  const prompt = `Leggi la foto allegata. È un documento, una ricetta, un piano terapeutico, una scatola di farmaci o uno scontrino di una persona anziana, fotografato da un familiare in Italia. Oggi è il ${today()}.
+Rispondi SOLO con questo oggetto JSON:
+{"genere":"documento"|"ricetta"|"scontrino"|"altro",
+ "riassunto":"una o due frasi in italiano semplice su cos'è e cosa conta",
+ "documento":{"nome":"nome breve del documento","tipo":uno tra ${JSON.stringify(TIPI_DOC)},"scadenza":"AAAA-MM-GG oppure vuoto","note":"dati utili: numero, ente, percentuale di invalidità, articolo della 104, data di revisione"},
+ "farmaci":[{"nome":"nome e dosaggio","dose":"quanto","orari":"quando prenderlo"}],
+ "spesa":{"descrizione":"","importo":0,"data":"AAAA-MM-GG","categoria":uno tra ${JSON.stringify(CAT_SPESA)}}}
+Regole: per ricette, piani terapeutici o scatole compila "farmaci". Per scontrini e fatture compila "spesa" con il totale pagato. Compila "documento" per ogni carta da archiviare. Lascia vuoto ciò che non si legge bene: non inventare nulla.`;
+  try { reviewScan(await sample.json(prompt, {images:[file]}), file); }
+  catch (e) { showMsg("Non sono riuscito a leggerla", `<p style="margin:0">${esc(errText(e.code))}</p>`); }
+}
+function reviewScan(r, file, raw){
+  r = r && typeof r === "object" ? r : {};
+  const d = r.documento || {}, sp = r.spesa || {};
+  const farm = (Array.isArray(r.farmaci) ? r.farmaci : []).filter(f => f && f.nome).map(f => ({nome:String(f.nome), dose:String(f.dose||""), orari:String(f.orari||""), note:"Letto da foto, da controllare"}));
+  const docPre = d.nome ? {nome:String(d.nome), tipo: TIPI_DOC.includes(d.tipo) ? d.tipo : "Altro", scadenza: isDate(d.scadenza) ? d.scadenza : "", dove:"", note:String(d.note||"")} : null;
+  const spPre = num(sp.importo) > 0 ? {descrizione:String(sp.descrizione||"Scontrino"), importo:String(num(sp.importo)), data: isDate(sp.data) ? sp.data : today(), categoria: CAT_SPESA.includes(sp.categoria) ? sp.categoria : "Altro", pagatoDa:""} : null;
+  const body = `<p style="margin:0">${esc(r.riassunto || "Ecco cosa ho letto.")}</p>
+    ${docPre ? `<div class="card small"><b>${esc(docPre.nome)}</b><br>${esc(docPre.tipo)}${docPre.scadenza ? " · scade il " + fmtDate(docPre.scadenza) : ""}${docPre.note ? "<br>" + esc(docPre.note) : ""}</div>` : ""}
+    ${farm.length ? `<div class="card small"><b>Farmaci trovati</b><ul style="margin:6px 0 0;padding-left:18px">${farm.map(f => `<li>${esc(f.nome)}${f.dose ? " – " + esc(f.dose) : ""}${f.orari ? " (" + esc(f.orari) + ")" : ""}</li>`).join("")}</ul></div>` : ""}
+    ${spPre ? `<div class="card small"><b>Spesa: ${eur(spPre.importo)}</b><br>${esc(spPre.descrizione)} · ${fmtDate(spPre.data)}</div>` : ""}
+    ${!docPre && !farm.length && !spPre ? `<p class="muted" style="margin:0">Non ho trovato dati da salvare. Provate con una foto più vicina e dritta.</p>` : `<p class="small muted" style="margin:0">Controllate sempre: la lettura automatica può sbagliare.</p>`}
+    ${raw ? `<details><summary class="small">Testo letto dalla foto</summary><pre style="white-space:pre-wrap;font-size:13px;max-height:200px;overflow:auto;margin:6px 0 0">${esc(raw)}</pre></details>` : ""}
+    ${raw !== undefined && canImg ? `<p class="small" style="margin:0">Letto male? <button type="button" class="btn ghost" id="scAi" style="min-height:36px;padding:4px 12px">Riprova con Claude</button></p>` : ""}`;
+  const foot = `<div class="row">${docPre ? '<button type="button" class="btn" id="scDoc">Salva il documento</button>' : ""}${farm.length ? `<button type="button" class="btn ${docPre ? "ghost" : ""}" id="scFarm">Aggiungi ${farm.length === 1 ? "il farmaco" : farm.length + " farmaci"}</button>` : ""}${spPre ? `<button type="button" class="btn ${docPre || farm.length ? "ghost" : ""}" id="scSpesa">Registra la spesa</button>` : ""}</div>`;
+  showMsg("Ecco cosa ho letto", body, foot);
+  if ($("#scAi")) $("#scAi").onclick = () => leggiConClaude(file);
+  if (docPre) $("#scDoc").onclick = () => openForm("documenti", null, docPre, file);
+  if (spPre) $("#scSpesa").onclick = () => openForm("spese", null, spPre);
+  if (farm.length) $("#scFarm").onclick = async e => {
+    const b = e.currentTarget; b.disabled = true;
+    let ok = true; for (const f of farm) ok = (await safe(() => store.add("farmaci", f))) && ok;
+    b.textContent = ok ? "Aggiunti a Salute" : "Qualcosa non è stato salvato";
+  };
+}
+
+/* ---------- Questionario iniziale ---------- */
+const QUESTIONS = [
+  {k:"chi", q:"Chi assistete?", opts:["Mamma","Papà","Moglie o marito","Nonna","Nonno","Un altro familiare"]},
+  {k:"vive", q:"Con chi vive adesso?", opts:["Da sola/o","Con il marito o la moglie","Con un figlio o una figlia","Con una badante","In una struttura"]},
+  {k:"cammina", q:"Come si muove?", opts:["Cammina da sola/o","Con bastone o deambulatore","In carrozzina","È a letto quasi sempre"]},
+  {k:"cura", q:"Si lava, si veste e va in bagno da sola/o?", opts:["Sì, fa tutto da sola/o","Ha bisogno di aiuto per alcune cose","Ha bisogno di aiuto per tutto"]},
+  {k:"memoria", q:"Com'è la memoria?", opts:["È lucida/o","Qualche dimenticanza","Demenza o Alzheimer diagnosticato","Si perde, si agita o non riconosce le persone"]},
+  {k:"notte", q:"E di notte?", opts:["Dorme tranquilla/o","Si sveglia ogni tanto","Serve qualcuno sveglio di notte"]},
+  {k:"patologie", q:"Ha una di queste condizioni?", multi:true, opts:["Diabete con insulina","Cuore o pressione","Parkinson","Esiti di ictus","Problemi respiratori o ossigeno","Piaghe da decubito","Nessuna di queste"]},
+  {k:"farmaci", q:"Quanti farmaci diversi prende al giorno?", opts:["Da 0 a 3","Da 4 a 7","8 o più"]},
+  {k:"carattere", q:"Com'è con le persone nuove?", opts:["Socievole","Diffidente all'inizio","A volte rifiuta l'aiuto o si arrabbia"]},
+  {k:"lingua", q:"Che lingua parla di solito?", opts:["Italiano","Soprattutto sardo o dialetto"]},
+  {k:"auto", q:"Servono spostamenti in auto per visite e spesa?", opts:["Sì, spesso","Ogni tanto","No, ci pensiamo noi figli"]},
+  {k:"figli", q:"Quanto vivono vicino figli e parenti?", opts:["Almeno uno nello stesso paese","Tutti in altre città","Qualcuno all'estero"]},
+  {k:"invalidita", q:"Ha già l'invalidità o la 104?", opts:["Sì, tutte e due","Solo l'invalidità","La domanda è in corso","No, niente"]},
+  {k:"budget", q:"Quanto potete spendere al mese, pensione compresa?", opts:["Meno di 1.000 €","Da 1.000 a 1.800 €","Da 1.800 a 2.500 €","Più di 2.500 €"]},
+  {k:"animali", q:"Ci sono animali in casa?", opts:["Sì","No"]}
+];
+let qStep = 0, qAns = {}, aiText = "";
+function openQuiz(){ const {id, aggiornato, ...prev} = S.config.questionario || {}; qAns = prev; qStep = 0; wStep = 0; drawQuiz(); }
+function drawQuiz(){
+  const Q = QUESTIONS[qStep], cur = qAns[Q.k], last = qStep === QUESTIONS.length - 1;
+  const sel = o => Q.multi ? (Array.isArray(cur) && cur.includes(o)) : cur === o;
+  showMsg(`Domanda ${qStep + 1} di ${QUESTIONS.length}`,
+    `<div class="meter"><i style="width:${(qStep + 1) / QUESTIONS.length * 100}%"></i></div>
+     <p class="qq">${esc(Q.q)}</p>${Q.multi ? '<p class="small muted" style="margin:0">Potete sceglierne più di una.</p>' : ""}
+     <div class="opts">${Q.opts.map((o, i) => `<button type="button" class="opt" data-opt="${i}" aria-pressed="${sel(o)}">${esc(o)}</button>`).join("")}</div>`,
+    `<button type="button" class="btn ghost" data-qback ${qStep ? "" : "disabled"}>Indietro</button><button type="button" class="btn" data-qnext>${last ? "Vedi il piano" : Q.multi || cur ? "Avanti" : "Salta"}</button>`);
+  form.onclick = async e => {
+    const o = e.target.closest("[data-opt]");
+    if (o) {
+      const val = Q.opts[o.dataset.opt];
+      if (Q.multi) { let arr = Array.isArray(qAns[Q.k]) ? [...qAns[Q.k]] : []; arr = arr.includes(val) ? arr.filter(x => x !== val) : [...arr.filter(x => val === "Nessuna di queste" ? false : x !== "Nessuna di queste"), val]; qAns[Q.k] = arr; drawQuiz(); }
+      else { qAns[Q.k] = val; if (!last) { qStep++; } drawQuiz(); }
+      return;
+    }
+    if (e.target.closest("[data-qback]")) { qStep--; drawQuiz(); return; }
+    if (e.target.closest("[data-qnext]")) {
+      if (!last) { qStep++; drawQuiz(); return; }
+      const ok = await safe(() => store.set("config", "questionario", {...qAns, aggiornato: today()}));
+      if (ok) { dlg.close(); setTab("piano"); } else showMsg("Non salvato", "<p>Non sono riuscito a salvare le risposte. Controllate di avere il permesso di modifica.</p>");
+    }
+  };
+}
+const qi = (a, k) => QUESTIONS.find(q => q.k === k).opts.indexOf(a[k]);
+const hasPat = (a, p) => Array.isArray(a.patologie) && a.patologie.includes(p);
+function piano(a){
+  if (!a) return null;
+  const cam = Math.max(0, qi(a,"cammina")), cura = Math.max(0, qi(a,"cura")), mem = Math.max(0, qi(a,"memoria")), notte = Math.max(0, qi(a,"notte"));
+  const dip = cam + cura * 1.5 + mem + notte;
+  const age = eta(S.config.assistito?.nascita);
+  let tipo, perche, costo;
+  if (a.vive === "In una struttura") { tipo = "Già in struttura: serve soprattutto coordinare visite, spese e pratiche"; perche = "Avete indicato che vive in una struttura."; costo = [2500, 3500]; }
+  else if (notte === 2 || (cam === 3 && cura === 2) || mem === 3) { tipo = "Badante convivente più una copertura per la notte"; perche = "Ha bisogno di qualcuno sveglio di notte o di assistenza continua: una sola persona non regge 24 ore su 24 per mesi."; costo = [2600, 3300]; }
+  else if (dip >= 5 || cura === 2) { tipo = "Badante convivente (livello CS, persona non autosufficiente)"; perche = "Ha bisogno di aiuto per lavarsi, vestirsi o muoversi durante tutta la giornata."; costo = [1650, 1900]; }
+  else if (dip >= 2) { tipo = "Badante non convivente, 4-6 ore al giorno"; perche = "È in parte autonoma/o: serve aiuto nei momenti chiave (mattina, pasti, igiene), non presenza continua."; costo = [1100, 1500]; }
+  else { tipo = "Aiuto a ore, 2 o 3 volte a settimana, più telesoccorso"; perche = "È ancora autonoma/o: basta un aiuto per casa e spesa e qualcuno che controlli."; costo = [350, 600]; }
+  const req = [];
+  if (mem >= 2) req.push("demenza");
+  if (cam >= 2 || cura === 2) req.push("mobilizza");
+  if (notte >= 1) req.push("notte");
+  if (hasPat(a,"Diabete con insulina")) req.push("glicemia");
+  if (hasPat(a,"Piaghe da decubito") || cam === 3) req.push("piaghe");
+  if (a.auto === "Sì, spesso") req.push("patente");
+  if (a.lingua === "Soprattutto sardo o dialetto") req.push("dialetto");
+  if (a.animali === "Sì") req.push("animali");
+  if (qi(a,"carattere") >= 1) req.push("pazienza");
+  const pratiche = [];
+  if (a.invalidita === "No, niente") pratiche.push("Avviate subito invalidità civile e 104: il primo passo è il certificato del medico di base. Senza invalidità non arrivano né accompagnamento né ausili gratuiti.");
+  if (a.invalidita === "Solo l'invalidità") pratiche.push("Chiedete anche la 104 (art. 3 comma 3): dà a voi figli i 3 giorni di permesso al mese e il congedo retribuito.");
+  if (cura >= 1 || cam >= 2 || mem >= 2) pratiche.push("Se non l'ha già, chiedete l'indennità di accompagnamento: non dipende dal reddito.");
+  if (age >= 80 && (a.budget === "Meno di 1.000 €" || a.budget === "Da 1.000 a 1.800 €")) pratiche.push("Ha almeno 80 anni: fate l'ISEE sociosanitario e verificate la prestazione universale, se è ancora attiva e l'ISEE è entro 6.000 €.");
+  if (cam >= 2 || hasPat(a,"Problemi respiratori o ossigeno") || hasPat(a,"Piaghe da decubito")) pratiche.push("Chiedete al medico di base l'attivazione dell'ADI (assistenza domiciliare integrata): infermiere e fisioterapista a casa, gratis.");
+  if (mem >= 2) pratiche.push("Valutate l'amministratore di sostegno, prima che serva per firmare in banca o in posta.");
+  pratiche.push("Chiedete ai servizi sociali del Comune quali contributi ci sono (in Sardegna «Ritornare a casa Plus»).");
+  const ausili = [];
+  if (cam >= 2) ausili.push("Letto articolato, materasso antidecubito e carrozzina: con l'invalidità li fornisce l'ASL su prescrizione.");
+  if (cam >= 1) ausili.push("Maniglioni e sedile per la doccia, tappetini antiscivolo, luce notturna verso il bagno. Contrassegno disabili dal Comune.");
+  if (a.vive === "Da sola/o") ausili.push("Telesoccorso con pulsante al collo: spesso il Comune lo dà gratis o a pochi euro.");
+  if (qi(a,"farmaci") >= 1 || mem >= 1) ausili.push("Portapillole settimanale o dispenser con allarme: con tanti farmaci al giorno gli errori sono frequenti.");
+  if (mem === 3) ausili.push("Braccialetto con nome e numero di telefono, o un localizzatore GPS, se capita che esca e si perda.");
+  const fam = [];
+  if (a.figli !== "Almeno uno nello stesso paese") fam.push("Nessuno di voi vive vicino: lasciate le chiavi a una persona di fiducia in paese e mettete il suo numero nella Scheda SOS.");
+  fam.push("Decidete chi è il referente per medico e badante, così lei o lui ha un solo numero da chiamare.");
+  fam.push("Mettete in Agenda i giorni di riposo della badante e chi copre quei giorni.");
+  if (a.invalidita !== "No, niente") fam.push("Dividetevi i 3 giorni al mese di permesso 104 tra chi lavora: li segnate nella sezione 104 e aiuti.");
+  return {tipo, perche, costo, req, pratiche, ausili, fam};
+}
+function compat(b, plan){
+  if (!plan || !plan.req.length) return null;
+  const has = k => k === "patente" ? !!b.patente : k === "pazienza" ? num(b.pazienza) >= 4 : !!b["r_" + k];
+  const ok = plan.req.filter(has), manca = plan.req.filter(k => !has(k));
+  return {pct: Math.round(ok.length / plan.req.length * 100), manca};
+}
+async function askClaude(btn){
+  const a = S.config.questionario || {}, p = piano(a);
+  const b = bilancio(curMonth());
+  const show = t => { aiText = t; const o = $("#aiOut"); if (o) o.textContent = t; };
+  btn.disabled = true; show("Claude sta pensando… di solito 10-40 secondi.");
+  const prompt = `Sei un consulente esperto di assistenza agli anziani in Italia e parli a figli che non sono esperti.
+Persona assistita: ${a.chi || "genitore"}${eta(S.config.assistito?.nascita) ? ", " + eta(S.config.assistito.nascita) + " anni" : ""}.
+Risposte al questionario: ${QUESTIONS.map(q => `${q.q} ${Array.isArray(a[q.k]) ? a[q.k].join(", ") : a[q.k] || "non risposto"}`).join(" | ")}
+Assistenza che abbiamo ipotizzato: ${p.tipo}. Spese registrate questo mese: ${Math.round(b.tot)} euro. Entrate mensili della persona: ${Math.round(b.entrate)} euro.
+Scrivi in italiano semplice, senza markdown e senza titoli: 5 consigli pratici numerati per le prossime 4 settimane, poi una riga che inizia con "Attenzione:" su un rischio da non sottovalutare. Massimo 220 parole. Non dare indicazioni su dosi o farmaci; per pratiche e importi ricorda di verificare con un patronato.`;
+  try { await sample(prompt, {onText: ({text}) => show(text)}); }
+  catch (e) { show(e.text || errText(e.code)); }
+  finally { btn.disabled = false; const nb = $("[data-ask]"); if (nb) nb.disabled = false; }
+}
+function showErr(t){ const p = $("#dlgErr"); p.textContent = t; p.hidden = false; }
+async function safe(fn){ try { await fn(); return true; } catch(e){ console.warn(e); return false; } }
+
+/* ---------- Scheda SOS ---------- */
+function openSOS(){
+  const a = S.config.assistito || {};
+  const farm = S.farmaci.map(f => `${f.nome}${f.dose ? " – " + f.dose : ""}${f.orari ? " (" + f.orari + ")" : ""}`).join("\n");
+  const righe = [["Nome", a.nome + (a.nascita ? `, ${eta(a.nascita)} anni (nata/o il ${fmtDate(a.nascita)})` : "")],["Indirizzo",a.indirizzo],["Allergie",a.allergie || "Nessuna indicata"],["Patologie",a.patologie],["Farmaci",farm],["Medico di base",[a.medico,a.medicoTel].filter(Boolean).join(" – ")],["Contatto di emergenza",a.emergenza]].filter(r => r[1]);
+  const testo = righe.map(([k,v]) => `${k}: ${v}`).join("\n");
+  form.innerHTML = `<div class="dlg-head"><h3 style="margin:0">Scheda SOS</h3><button type="button" class="x" id="dlgClose" aria-label="Chiudi">×</button></div>
+  <div class="dlg-body">${a.nome ? `<dl class="sos-sheet">${righe.map(([k,v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>
+  <p class="small muted" style="margin:0">Da mostrare al 118, al pronto soccorso o a una badante nuova.</p>` : `<div class="empty">Inserisci prima i dati della persona assistita nella sezione Famiglia.</div>`}</div>
+  <div class="dlg-foot"><span></span>${a.nome ? '<button type="button" class="btn" id="copySos">Copia il testo</button>' : ""}</div>`;
+  $("#dlgClose").onclick = () => dlg.close();
+  const c = $("#copySos");
+  if (c) c.onclick = () => navigator.clipboard.writeText(testo).then(() => c.textContent = "Copiato", () => { c.textContent = "Selezionalo e copialo a mano"; });
+  dlg.showModal();
+}
+$("#sosBtn").onclick = openSOS;
+
+/* ---------- Navigazione ---------- */
+const ICONS = {
+  home:'<path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/>',
+  wallet:'<path d="M4 7h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zM4 7l11-3v3"/><path d="M16 13.5h.01" stroke-width="3"/>',
+  folder:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  heart:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/><path d="M8.5 11.5h2l1-2 1.5 4 1-2h1.5"/>',
+  grid:'<rect x="4" y="4" width="6.5" height="6.5" rx="2"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="2"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="2"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="2"/>',
+  compass:'<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>',
+  usercheck:'<circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15.5 11.5l2 2 3.5-4"/>',
+  shield:'<path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/>',
+  users:'<circle cx="8" cy="8" r="3"/><path d="M2.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5M16 5a2.5 2.5 0 0 1 0 5M15.5 14c3 0 6 1.7 6 5"/>',
+  camera:'<path d="M4 8a2 2 0 0 1 2-2h2l1.5-2h5L16 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><circle cx="12" cy="12.5" r="3.5"/>',
+  share:'<path d="M12 3v12M8 7l4-4 4 4M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"/>',
+  lock:'<rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+  download:'<path d="M12 4v11M8 11l4 4 4-4M5 20h14"/>',
+  pin:'<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  cross:'<rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M12 8v8M8 12h8"/>',
+  building:'<path d="M4 20V8l8-4 8 4v12M4 20h16M9 20v-5h6v5M8 10h.01M12 10h.01M16 10h.01" />',
+  phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z"/>',
+  search:'<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/>',
+  hand:'<path d="M7 12V6.5a1.5 1.5 0 0 1 3 0V11M10 10.5V5a1.5 1.5 0 0 1 3 0v5.5M13 10.5V6a1.5 1.5 0 0 1 3 0v6M16 9.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-.5A6.5 6.5 0 0 1 6 17l-2.2-3.6a1.5 1.5 0 0 1 2.6-1.5L7 13"/>'
+};
+const icon = n => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]}</svg>`;
+const MARK = `<svg class="mark" viewBox="0 0 64 64" fill="none" stroke-width="5" stroke-linecap="round" aria-hidden="true"><path class="arc" d="M13.75 36.25a18.25 18.25 0 0 1 36.5 0"/><circle cx="26.75" cy="37.5" r="4.25"/><path class="b" d="M19.5 51.25a7.25 7.25 0 0 1 14.5 0"/><circle cx="39.25" cy="40.25" r="3.25"/><path class="b" d="M34 51.25a5.25 5.25 0 0 1 10.5 0"/></svg>`;
+const NAV = [["oggi","Oggi","home"],["spese","Spese","wallet"],["documenti","Documenti","folder"],["salute","Salute","heart"],["altro","Altro","grid"]];
+const ALTRO = [["vicino","Vicino a te","pin","Farmacie, ospedali, guardia medica, uffici"],["bacheca","Trova una badante","search","Badanti iscritte nella vostra zona"],["piano","Il piano","compass","Che assistenza serve e cosa fare adesso"],["badante","Badante","usercheck","Contratto, costi e candidate"],["aiuti","104 e aiuti","shield","Pratiche, permessi e agevolazioni"],["famiglia","Famiglia","users","Chi assistete e chi divide le spese"]];
+const TABS = [...NAV.filter(n => n[0] !== "altro"), ...ALTRO];
+let tab = TABS.some(t => "#"+t[0] === location.hash) ? location.hash.slice(1) : "oggi";
+let mese = curMonth();
+function setTab(t){ tab = t; if (location.hash !== "#"+t) history.replaceState(null, "", "#"+t); render(); window.scrollTo(0,0); }
+window.addEventListener("hashchange", () => { const h = location.hash.slice(1); if (TABS.some(t => t[0] === h)) setTab(h); });
+function renderTabs(){
+  const cur = ALTRO.some(a => a[0] === tab) ? "altro" : tab;
+  $("#tabs").innerHTML = `<div class="in">${NAV.map(([k,l,ic]) => `<button type="button" data-tab="${k}" ${k===cur?'aria-current="page"':""}><span class="ic">${icon(ic)}</span>${l}</button>`).join("")}</div>`;
+}
+$("#tabs").onclick = e => {
+  const b = e.target.closest("[data-tab]"); if (!b) return;
+  if (b.dataset.tab !== "altro") return setTab(b.dataset.tab);
+  showMsg("Altro", `<div class="sheet-list">${ALTRO.map(([k,l,ic,d]) => `<button type="button" data-sheet="${k}">${icon(ic)}<div><b>${l}</b><span>${d}</span></div></button>`).join("")}</div>`);
+  form.onclick = ev => { const s = ev.target.closest("[data-sheet]"); if (s) { dlg.close(); setTab(s.dataset.sheet); } };
+};
+const saluto = () => { const h = new Date().getHours(), n = S.config.utente?.nome; return (h < 13 ? "Buongiorno" : h < 18 ? "Buon pomeriggio" : "Buonasera") + (n ? ", " + n : ""); };
+const standalone = () => { try { return matchMedia("(display-mode: standalone)").matches || navigator.standalone === true; } catch { return false; } };
+let installEvt = null;
+window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); installEvt = e; render(); });
+function installCard(){
+  let hidden = false; try { hidden = localStorage.getItem("accanto-noinstall") === "1"; } catch {}
+  if (!local || standalone() || hidden) return "";
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  return `<div class="install"><h3>Mettila sulla schermata Home</h3>
+    ${installEvt ? `<p>Così si apre con un tocco, come le altre app.</p><p><button type="button" class="btn" data-install>${icon("download")}Installa Accanto</button></p>`
+      : ios ? `<p>In basso in Safari tocca ${icon("share")} <b>Condividi</b>, poi scegli <b>«Aggiungi alla schermata Home»</b>.</p>`
+      : `<p>Nel browser tocca il menu con i tre puntini in alto a destra, poi <b>«Installa app»</b> o <b>«Aggiungi a schermata Home»</b>.</p>`}
+    <p><button type="button" class="btn link" data-hideinstall style="padding:0">Non ora</button></p></div>`;
+}
+/* ---------- Vicino a te ---------- */
+const LUOGHI = [
+  ["Farmacia","farmacia","Orari, telefono e indicazioni","cross"],
+  ["Farmacia di turno","farmacia di turno","Per la notte e i giorni di festa","cross"],
+  ["Pronto soccorso","pronto soccorso ospedale","L'ospedale più vicino","cross"],
+  ["Guardia medica","guardia medica","Di notte, il sabato e nei festivi","cross"],
+  ["Laboratorio analisi","laboratorio analisi","Prelievi ed esami del sangue","cross"],
+  ["Sanitaria e ausili","sanitaria ortopedia","Carrozzine, deambulatori, presidi","pin"],
+  ["Distretto ASL","distretto sanitario ASL","Ausili, ADI, esenzioni ticket","building"],
+  ["CAF e patronati","patronato CAF","104, invalidità, ISEE, contratto badante","building"],
+  ["Sede INPS","sede INPS","Pensione, accompagnamento","building"],
+  ["Servizi sociali","servizi sociali comune","Assistenza domiciliare e contributi","building"],
+  ["Agenzia per badanti","agenzia badanti","Se volete farvi aiutare nella scelta","pin"]
+];
+let doveCerco = "casa";
+const mapsUrl = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
+function vVicino(){
+  const a = S.config.assistito || {};
+  const casa = (a.indirizzo || "").trim();
+  const usaCasa = doveCerco === "casa" && casa;
+  const dove = usaCasa ? " vicino a " + casa : " vicino a me";
+  return `<h2>Vicino a te</h2>
+  <p class="lead">Un tocco e si apre la mappa con i posti più vicini, gli orari e il telefono.</p>
+  <div class="sos-box"><span class="n">112</span><p><b>Emergenza: chiamate il 112.</b> Risponde in tutta Italia e manda l'ambulanza. Tenete pronta la Scheda SOS.</p><a class="btn danger" href="tel:112">${icon("phone")}Chiama</a></div>
+  <div class="row between" style="margin:18px 0 12px">
+    <div class="seg" role="group" aria-label="Dove cercare">
+      <button type="button" data-dove="casa" aria-pressed="${!!usaCasa}">Vicino a casa${a.nome ? " di " + esc(a.nome) : ""}</button>
+      <button type="button" data-dove="qui" aria-pressed="${!usaCasa}">Dove sono ora</button>
+    </div>
+  </div>
+  ${doveCerco === "casa" && !casa ? `<p class="notice" style="margin:0 0 12px">Per cercare vicino a casa${a.nome ? " di " + esc(a.nome) : ""} inserite l'indirizzo in Famiglia. Intanto cerco vicino a dove siete ora.</p>` : ""}
+  <div class="places">${LUOGHI.map(([t,q,d,ic]) => `<a class="place" href="${esc(mapsUrl(q + dove))}" target="_blank" rel="noopener">${icon(ic)}<div><b>${t}</b><span>${d}</span></div></a>`).join("")}
+    <button type="button" class="place" data-go="bacheca" style="text-align:left;font:inherit;cursor:pointer">${icon("search")}<div><b>Badanti in zona</b><span>Iscritte su Accanto</span></div></button></div>
+  <p class="small muted" style="margin-top:14px">La mappa si apre in Google Maps. Se il telefono lo chiede, permettete di usare la posizione.</p>`;
+}
+
+/* ---------- Bacheca badanti ---------- */
+let filtroZona = null, filtroFormula = "";
+const mioProfiloId = () => { try { return localStorage.getItem("accanto-profilo"); } catch { return null; } };
+function openProfilo(){
+  let id = mioProfiloId();
+  const rec = S.profili.find(p => p.id === id);
+  if (!rec) { id = uuid(); try { localStorage.setItem("accanto-profilo", id); } catch {} }
+  openForm("profili", rec || {id, visibile: true, whatsapp: true});
+}
+const soloCifre = t => String(t || "").replace(/[^\d+]/g, "");
+function contatta(p){
+  const tel = soloCifre(p.telefono), wa = tel.replace(/^\+/, "").replace(/^(?!39)/, "39");
+  showMsg("Contatta " + p.nome, `<p style="margin:0">Telefono</p><p class="big num" style="margin:0;user-select:all">${esc(p.telefono)}</p>
+    <div class="row"><a class="btn" href="tel:${esc(tel)}">${icon("phone")}Chiama</a>${p.whatsapp ? `<a class="btn ghost" href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener">Scrivi su WhatsApp</a>` : ""}</div>
+    <p class="small muted" style="margin:0">Al primo contatto chiedete referenze e documenti, e fate un colloquio di persona.</p>`);
+}
+function vBacheca(){
+  const casaZona = (S.config.assistito?.indirizzo || "").split(",").pop().trim();
+  if (filtroZona === null && casaZona) filtroZona = casaZona;
+  const plan = piano(S.config.questionario);
+  const mio = S.profili.find(p => p.id === mioProfiloId());
+  const z = (filtroZona || "").toLowerCase();
+  const lista = S.profili.filter(p => p.visibile !== false && p.id !== mio?.id)
+    .filter(p => !z || (p.zona || "").toLowerCase().includes(z) || z.includes((p.zona || "").toLowerCase().split(/[ ,]/)[0]))
+    .filter(p => !filtroFormula || p.formula === filtroFormula || p.formula === "Va bene tutto")
+    .map(p => ({p, c: plan ? compat(p, {...plan, req: plan.req.filter(k => k !== "pazienza")}) : null}))
+    .sort((x, y) => ((y.c?.pct ?? 0) - (x.c?.pct ?? 0)) || (num(y.p.esperienza) - num(x.p.esperienza)));
+  const comp = p => ["demenza","mobilizza","notte","glicemia","piaghe","dialetto","animali"].filter(k => p["r_" + k]).map(k => REQ[k].split(" (")[0]).concat(p.patente ? ["Ha la patente"] : []);
+  return `<h2>Trova una badante</h2>
+  <p class="lead">Badanti che si sono iscritte da sole su Accanto, nella vostra zona. Le contattate voi direttamente: nessuna commissione.</p>
+  ${local && bachecaOnline === false ? `<p class="notice">Non riesco a collegarmi alla bacheca. Controllate la connessione a internet e riaprite questa pagina.</p>` : ""}
+  ${mio ? `<div class="prof"><h3>Il tuo profilo è ${mio.visibile === false ? "nascosto" : "visibile alle famiglie"}</h3><p class="small muted">${esc(mio.nome)} · ${esc(mio.zona)}</p><p><button type="button" class="btn ghost" data-profilo>Modifica il profilo</button></p></div>` : ""}
+  <div class="row" style="margin:14px 0">
+    <label class="f" style="flex:1;min-width:180px">Zona<input id="filtroZona" value="${esc(filtroZona || "")}" placeholder="Comune o quartiere"></label>
+    <label class="f" style="flex:1;min-width:160px">Formula<select id="filtroFormula">${["","Convivente","Non convivente","A ore","Notte"].map(o => `<option value="${o}" ${o === filtroFormula ? "selected" : ""}>${o || "Tutte"}</option>`).join("")}</select></label>
+  </div>
+  ${plan ? `<p class="small muted" style="margin:0 0 10px">In cima trovate chi sa fare quello che serve a ${esc(S.config.assistito?.nome || "chi assistete")}, secondo il vostro piano.</p>` : ""}
+  <div class="stack">${lista.length ? lista.map(({p, c}) => `<article class="prof">
+      <div class="row between"><h3>${esc(p.nome)}</h3>${c && c.pct ? pill(`Adatta al ${c.pct}%`, c.pct >= 75 ? "good" : c.pct >= 50 ? "" : "grey") : ""}</div>
+      <p class="small muted">${[p.zona, p.formula, p.esperienza ? p.esperienza + " anni di esperienza" : "", p.disponibile ? "libera dal " + fmtDate(p.disponibile) : "", p.tariffa].filter(Boolean).map(esc).join(" · ")}</p>
+      ${comp(p).length ? `<div class="chips">${comp(p).map(t => `<span class="chip">${esc(t)}</span>`).join("")}</div>` : ""}
+      ${p.presentazione ? `<p>${esc(p.presentazione)}</p>` : ""}
+      ${p.lingue ? `<p class="small muted">Lingue: ${esc(p.lingue)}</p>` : ""}
+      <div class="row"><button type="button" class="btn" data-contatta="${esc(p.id)}">${icon("phone")}Contatta</button><button type="button" class="btn ghost" data-candida="${esc(p.id)}">Aggiungi alle mie candidate</button></div>
+    </article>`).join("") : empty(`Ancora nessuna badante iscritta${z ? " a " + esc(filtroZona) : ""}. Provate a togliere la zona, oppure fate conoscere Accanto alle badanti della zona: iscriversi è gratis.`)}</div>
+  <div class="hero-card" style="margin-top:20px"><h3 style="margin:0">Sei una badante?</h3><p>Crea il tuo profilo gratis: le famiglie della tua zona ti trovano e ti chiamano direttamente. Nessuno ti chiede soldi.</p><p><button type="button" class="btn" data-profilo>${mio ? "Modifica il tuo profilo" : "Crea il tuo profilo"}</button></p></div>
+  <p class="small muted" style="margin-top:14px">Accanto non seleziona e non assume nessuno: mette in contatto. Verificate sempre referenze, documenti e permesso di soggiorno, e fate un contratto regolare.</p>`;
+}
+
+let wStep = 0;
+function vBenvenuto(){
+  if (wStep === 1) {
+    const chi = S.config.assistito?.nome || "la persona che assisti";
+    return `<section class="welcome">${MARK}<h2>Piacere${S.config.utente?.nome ? ", " + esc(S.config.utente.nome) : ""}.</h2>
+      <p class="lead">Ti faccio 15 domande veloci su come sta ${esc(chi)}. Bastano 3 minuti e alla fine trovi un piano: che aiuto serve, quanto costa, quali pratiche avviare.</p>
+      <button type="button" class="btn big" data-quiz>Sì, rispondo adesso</button>
+      <button type="button" class="btn link" data-wend>Lo faccio più tardi</button></section>`;
+  }
+  return `<section class="welcome">${MARK}<h2>Benvenuto in Accanto</h2>
+    <p class="lead">Spese, documenti, medicine, badante e aiuti per chi ami. Tutto in un posto, senza fogli sparsi.</p>
+    <form id="wForm" class="stack" autocomplete="off">
+      <label class="f">Come ti chiami?<input id="w_nome" name="nome" placeholder="Il tuo nome" autocomplete="given-name"></label>
+      <label class="f">Come si chiama la persona che assisti?<input id="w_ass" name="ass" placeholder="Per esempio Rosa" value="${esc(S.config.assistito?.nome || "")}"></label>
+      <button class="btn big" type="submit">Iniziamo</button>
+    </form>
+    ${local ? `<div class="note">${icon("lock")}<span>Quello che scrivi resta su questo telefono. Nessuno lo vede, nemmeno noi.</span></div>` : ""}
+    <button type="button" class="btn link" data-wskip>Salta, voglio solo dare un'occhiata</button>
+    <div class="prof" style="margin-top:6px"><h3>Sei una badante e cerchi lavoro?</h3><p class="small muted">Crea il tuo profilo gratis: le famiglie della tua zona ti trovano su Accanto.</p><p><button type="button" class="btn ghost" data-badante-entra>${icon("hand")}Mi iscrivo come badante</button></p></div></section>`;
+}
+function backup(){
+  const blob = new Blob([JSON.stringify({app: "accanto", versione: 1, data: today(), dati: store.dump()})], {type: "application/json"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `accanto-copia-${today()}.json`;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+}
+$("#restoreInput").onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  let copia; try { copia = JSON.parse(await f.text()); } catch { copia = null; }
+  if (!copia || copia.app !== "accanto" || !copia.dati) return showMsg("File non valido", "<p style='margin:0'>Questo file non è una copia di Accanto. Scegliete il file che inizia con «accanto-copia».</p>");
+  showMsg("Ripristinare la copia?", `<p style="margin:0">La copia è del ${fmtDate(copia.data)}. I dati che ci sono ora su questo telefono verranno sostituiti.</p>`,
+    `<button type="button" class="btn ghost" id="rNo">Annulla</button><button type="button" class="btn danger" id="rSi">Sì, sostituisci</button>`);
+  $("#rNo").onclick = () => dlg.close();
+  $("#rSi").onclick = async () => { await store.load(copia.dati); dlg.close(); setTab("oggi"); };
+};
+
+/* ---------- Pezzi riutilizzabili ---------- */
+const addBtn = (key, label) => `<button type="button" class="btn" data-add="${key}">${label}</button>`;
+const item = (key, r, title, sub, pill) => `<button type="button" class="item" data-edit="${key}" data-id="${esc(r.id)}"><div class="main"><div class="t">${esc(title)}</div>${sub ? `<div class="s">${sub}</div>` : ""}</div>${pill || ""}</button>`;
+const pill = (t, c="") => `<span class="pill ${c}">${esc(t)}</span>`;
+const empty = t => `<div class="empty">${t}</div>`;
+const scanBtn = (label = "Fotografa un documento") => `<button type="button" class="btn ghost" data-scan>${icon("camera")}${label}</button>`;
+const monthPicker = () => `<label class="f" style="max-width:220px">Mese<input type="month" id="mesePick" value="${mese}"></label>`;
+
+function blocchiQuote(b, compatto){
+  if (!S.famiglia.length) return empty("Aggiungi i figli o i familiari nella sezione Famiglia per dividere le spese.");
+  const giri = b.giri.length ? b.giri.map(g => `<div class="transfer"><span>${esc(g.da)}</span><span aria-hidden="true">→</span><span>${esc(g.a)}</span><span class="num" style="margin-left:auto">${eur(g.v)}</span></div>`).join("") : `<div class="transfer" style="background:var(--good-soft);color:var(--good)">Siete in pari: nessuno deve niente a nessuno.</div>`;
+  const tab = `<div class="tablebox"><table><thead><tr><th>Familiare</th><th class="r">Quota</th><th class="r">Doveva</th><th class="r">Ha pagato</th><th class="r">Saldo</th></tr></thead><tbody>${b.righe.map(r => `<tr><td>${esc(r.f.nome)}</td><td class="r">${Math.round(r.q*100)}%</td><td class="r">${eur(r.dovuto)}</td><td class="r">${eur(r.pagato)}</td><td class="r" style="color:${r.saldo<-0.5?"var(--bad)":r.saldo>0.5?"var(--good)":"var(--muted)"};font-weight:600">${r.saldo>0?"+":""}${eur(r.saldo)}</td></tr>`).join("")}</tbody></table></div>`;
+  return compatto ? `<div class="stack">${giri}</div>` : `<div class="stack">${tab}<h3 style="margin-top:6px">Per chiudere il mese</h3>${giri}</div>`;
+}
+
+/* ---------- Viste ---------- */
+function vOggi(){
+  const a = S.config.assistito || {};
+  const b = bilancio(curMonth());
+  const p = permessiMese(curMonth());
+  const allarmi = [];
+  S.documenti.forEach(d => { if (d.scadenza && daysTo(d.scadenza) <= 60) allarmi.push({d:d.scadenza, h:item("documenti", d, d.nome, "Documento · " + esc(d.dove || d.tipo || ""), pill(...statoDoc(d)))}); });
+  S.farmaci.forEach(f => { if (f.finisce && daysTo(f.finisce) <= 10) { const n = daysTo(f.finisce); allarmi.push({d:f.finisce, h:item("farmaci", f, f.nome, "Farmaco da ricomprare", pill(n<0?"Finito":`Finisce tra ${n} gg`, n<=3?"bad":"warn"))}); } });
+  S.agenda.forEach(e => { const n = daysTo(e.data); if (n >= 0 && n <= 14) allarmi.push({d:e.data, h:item("agenda", e, e.titolo, `${fmtDate(e.data)}${e.ora?" alle "+esc(e.ora):""}${e.chi?" · "+esc(famName(e.chi)):""}`, pill(n===0?"Oggi":n===1?"Domani":`Tra ${n} gg`, n<=1?"warn":""))}); });
+  allarmi.sort((x,y) => x.d < y.d ? -1 : 1);
+  return `
+  <h2>${a.nome ? "Come va con " + esc(a.nome) : "Benvenuti in Accanto"}</h2>
+  <p class="lead">${a.nome ? `${a.nascita ? eta(a.nascita) + " anni · " : ""}La situazione di ${monthName(curMonth())} in un colpo d'occhio.` : `Iniziate dalla sezione Famiglia: inserite i dati della persona che assistete e i figli che dividono le spese.`}</p>
+  <div class="stack" style="margin-bottom:12px">
+  ${installCard()}
+  ${S.config.questionario ? "" : `<div class="hero-card"><h3 style="margin:0">Prima di tutto: 15 domande, 3 minuti</h3><p>Rispondete insieme su come sta e cosa le serve. Accanto vi prepara il piano: che tipo di badante cercare, quanto costa, le pratiche da avviare e gli ausili utili.</p><p><button type="button" class="btn" data-quiz>Inizia le domande</button></p></div>`}
+  <div class="places">${[["Farmacia","farmacia","cross"],["Farmacia di turno","farmacia di turno","cross"],["Pronto soccorso","pronto soccorso ospedale","cross"]].map(([t,q,ic]) => `<a class="place" href="${esc(mapsUrl(q + (S.config.assistito?.indirizzo ? " vicino a " + S.config.assistito.indirizzo : " vicino a me")))}" target="_blank" rel="noopener">${icon(ic)}<div><b>${t}</b><span>La più vicina</span></div></a>`).join("")}<button type="button" class="place" data-go="vicino" style="text-align:left;font:inherit;cursor:pointer">${icon("pin")}<div><b>Altro vicino a te</b><span>Guardia medica, CAF, INPS, ASL</span></div></button></div>
+  <div class="card row between"><div style="flex:1;min-width:220px"><h3 style="margin:0 0 2px">Fotografa e archivia</h3><p class="small muted" style="margin:0">Documento, ricetta o scontrino: l'app legge il testo sul telefono, trova scadenza o totale e vi propone dove salvarlo.</p></div>${scanBtn("Scatta una foto")}</div>
+  </div>
+  <div class="grid2">
+    <div class="card"><h3>Spese di questo mese</h3><div class="big num">${eur(b.tot)}</div>
+      <p class="small muted" style="margin:4px 0 12px">${eur(b.daPensione)} pagati dal conto di ${esc(a.nome||"chi è assistito")} · ${eur(b.daCoprire)} da dividere tra i figli</p>
+      ${blocchiQuote(b, true)}
+      <p style="margin:12px 0 0"><button type="button" class="btn ghost" data-go="spese">Vedi il dettaglio</button></p></div>
+    <div class="card"><h3>Permessi 104 del mese</h3><div class="big num">${p.usati} <span class="muted" style="font-size:18px">di 3 giorni</span></div>
+      <div class="meter" style="margin:10px 0" role="img" aria-label="${p.usati} giorni usati su 3"><i style="width:${Math.min(100,p.usati/3*100)}%"></i></div>
+      <p class="small muted" style="margin:0 0 12px">I 3 giorni al mese si possono dividere tra più familiari che lavorano, ma il totale per la stessa persona assistita resta 3.</p>
+      <button type="button" class="btn ghost" data-add="permessi">Segna un permesso</button></div>
+  </div>
+  <h2 style="font-size:22px">Da tenere d'occhio</h2>
+  <p class="lead">Documenti che scadono entro 60 giorni, farmaci che stanno finendo e impegni delle prossime due settimane.</p>
+  <div class="list">${allarmi.length ? allarmi.map(x => x.h).join("") : empty("Niente in scadenza. Quando aggiungete documenti, farmaci e visite, gli avvisi compaiono qui.")}</div>`;
+}
+
+function vSpese(){
+  const b = bilancio(mese);
+  const perCat = {};
+  b.list.forEach(s => perCat[s.categoria||"Altro"] = (perCat[s.categoria||"Altro"]||0) + num(s.importo));
+  const copre = b.entrate && b.tot ? Math.min(100, Math.round(b.entrate/b.tot*100)) : null;
+  return `
+  <h2>Spese e quote</h2>
+  <p class="lead">Ogni figlio segna quello che paga. A fine mese Accanto calcola chi deve dare quanto a chi, secondo le quote stabilite in famiglia.</p>
+  <div class="row between" style="align-items:flex-end;margin-bottom:12px">${monthPicker()}<div class="row">${scanBtn("Fotografa lo scontrino")}${addBtn("spese","Aggiungi una spesa")}</div></div>
+  <div class="grid2">
+    <div class="card"><h3>${monthName(mese)}</h3><div class="big num">${eur(b.tot)}</div>
+      <p class="small muted" style="margin:4px 0 0">${b.entrate ? `Le entrate di ${esc(S.config.assistito?.nome||"chi è assistito")} sono ${eur(b.entrate)} al mese${copre!==null?`: coprono il ${copre}% delle spese`:""}.` : "Inserisci pensione e accompagnamento nella sezione Famiglia per vedere quanto coprono."}</p></div>
+    <div class="card"><h3>Per categoria</h3>${Object.keys(perCat).length ? `<div class="stack small">${Object.entries(perCat).sort((x,y)=>y[1]-x[1]).map(([k,v]) => `<div class="row between num"><span>${esc(k)}</span><span>${eur(v)}</span></div><div class="meter"><i style="width:${v/b.tot*100}%"></i></div>`).join("")}</div>` : empty("Nessuna spesa in questo mese.")}</div>
+  </div>
+  <div class="card" style="margin-top:12px"><h3>Chi deve cosa</h3>${blocchiQuote(b, false)}</div>
+  <h3 style="margin-top:20px">Movimenti del mese</h3>
+  <div class="list">${b.list.length ? b.list.sort((x,y)=> x.data < y.data ? 1 : -1).map(s => item("spese", s, s.descrizione, `${s.ricorrente ? "Ogni mese" : fmtDate(s.data)} · ${esc(s.categoria||"")} · pagata da ${esc(famName(s.pagatoDa))}`, `<span class="pill grey num">${eur(s.importo)}</span>`)).join("") : empty("Nessuna spesa registrata in questo mese.")}</div>`;
+}
+
+function vDocumenti(){
+  const tipi = {};
+  S.documenti.forEach(d => (tipi[d.tipo||"Altro"] ||= []).push(d));
+  const ord = Object.keys(tipi).sort();
+  return `
+  <h2>Documenti</h2>
+  <p class="lead">Tutti i documenti di chi assistete in un posto solo: scadenze, dove si trova l'originale${assets ? " e una foto da mostrare quando serve" : ""}.</p>
+  <div class="row between" style="margin-bottom:12px"><span class="muted small">${S.documenti.length} documenti · ${S.documenti.filter(d => d.scadenza && daysTo(d.scadenza) < 0).length} scaduti</span><div class="row">${scanBtn()}${addBtn("documenti","Aggiungi a mano")}</div></div>
+  ${ord.length ? ord.map(t => `<h3 style="margin-top:18px">${esc(t)}</h3><div class="list">${tipi[t].map(d => item("documenti", d, d.nome, [d.dove ? "Originale: " + esc(d.dove) : "", d.foto ? `<span class="linkish" data-foto="${esc(d.id)}">Vedi il file</span>` : ""].filter(Boolean).join(" · "), pill(...statoDoc(d)))).join("")}</div>`).join("") : empty("Iniziate da quelli che servono più spesso: carta d'identità, tessera sanitaria, verbale di invalidità e 104, esenzione ticket, ISEE.")}
+  <div class="card" style="margin-top:20px"><h3>Quelli che di solito servono</h3><p class="small muted" style="margin:0">Carta d'identità · Tessera sanitaria · Verbale di invalidità civile e 104 · Esenzione ticket · ISEE sociosanitario · Piano terapeutico · Cedolino della pensione · Contratto della badante · Delega in banca o in posta · Contrassegno disabili</p></div>`;
+}
+
+function vBadante(){
+  const c = S.config.contratto || {};
+  const k = costoBadante(c);
+  const plan = piano(S.config.questionario);
+  const cm = b => compat(b, plan);
+  const cand = [...S.badanti].sort((a,b) => ((cm(b)?.pct ?? 0) - (cm(a)?.pct ?? 0)) || (punteggio(b) - punteggio(a)));
+  const statoCls = {"Scelta":"good","Scartata":"grey","In prova":"warn","Colloquio fissato":""};
+  return `
+  <h2>Badante</h2>
+  <p class="lead">Il costo vero del contratto e una scheda per confrontare le candidate con gli stessi criteri.</p>
+  <div class="card"><div class="row between"><h3 style="margin:0">Contratto in corso</h3><button type="button" class="btn ghost" data-add="config/contratto">${c.stipendio ? "Modifica" : "Inserisci il contratto"}</button></div>
+  ${c.stipendio ? `<p class="small muted" style="margin:6px 0 10px">${esc(c.nome||"")}${c.livello?" · "+esc(c.livello):""}${c.oreSettimana?" · "+esc(c.oreSettimana)+" ore a settimana":""}${c.riposo?" · riposi: "+esc(c.riposo):""}</p>
+  <div class="tablebox"><table><tbody>
+    <tr><td>Stipendio</td><td class="r">${eur(k.s)}</td></tr>
+    <tr><td>Contributi INPS</td><td class="r">${eur(k.contr)}</td></tr>
+    <tr><td>Tredicesima, da mettere da parte</td><td class="r">${eur(k.tred)}</td></tr>
+    <tr><td>TFR, da mettere da parte</td><td class="r">${eur(k.tfr)}</td></tr>
+    <tr><th>Costo reale al mese</th><th class="r" style="color:var(--ink);font-size:17px">${eur(k.tot)}</th></tr>
+  </tbody></table></div>
+  <p class="small muted" style="margin:10px 0 0">Stima. A ogni fratello tocca circa ${S.famiglia.length ? eur(k.tot / S.famiglia.length) : "—"} al mese se dividete in parti uguali. In dichiarazione si possono dedurre i contributi versati (fino a 1.549,37 € l'anno) e detrarre il 19% della spesa per l'assistenza (fino a 2.100 €) se il reddito non supera 40.000 €.</p>` : `<p class="small muted">Stipendio, contributi, tredicesima e TFR: inserite i dati e vedete quanto costa davvero ogni mese.</p>`}</div>
+  <div class="row between" style="margin:22px 0 10px"><h3 style="margin:0">Candidate a confronto</h3><div class="row"><button type="button" class="btn ghost" data-go="bacheca">${icon("search")}Cerca in zona</button>${addBtn("badanti","Aggiungi a mano")}</div></div>
+  ${plan ? (plan.req.length ? `<p class="small muted" style="margin:-4px 0 10px">Ordinate prima per quanto sono adatte (${plan.req.map(k => esc(REQ[k].split(" (")[0].toLowerCase())).join(", ")}), poi per il voto del colloquio.</p>` : "") : `<p class="small muted" style="margin:-4px 0 10px">Rispondete alle domande in Altro › Il piano: le candidate verranno ordinate anche per quanto sono adatte a lei o a lui.</p>`}
+  <div class="list">${cand.length ? cand.map(b => item("badanti", b, b.nome, [b.formula, b.esperienza ? b.esperienza + " anni di esperienza" : "", b.stipendio ? "chiede " + eur(b.stipendio) : "", b.referenze ? "referenze verificate" : "referenze da verificare", b.patente ? "patente" : ""].filter(Boolean).map(esc).join(" · ") + `<br>${cm(b) ? `Adatta alle vostre esigenze: <b class="num">${cm(b).pct}%</b>${cm(b).manca.length ? ` · manca: ${cm(b).manca.map(k => esc(REQ[k].split(" (")[0].toLowerCase())).join(", ")}` : ""}<br>` : ""}Voto dal colloquio <b class="num">${String(punteggio(b) || "—").replace(".", ",")}</b> su 5,5`, pill(b.stato || "Da sentire", statoCls[b.stato] ?? "grey"))).join("") : empty("Segnate ogni persona che sentite: dopo il colloquio date un voto da 1 a 5 su pazienza, esperienza, affidabilità, cucina e lingua. La lista si ordina da sola.")}</div>
+  <div class="card" style="margin-top:20px"><h3>Domande da fare al colloquio</h3><ul style="margin:0;padding-left:20px" class="small">
+    <li>Con che tipo di persone ha lavorato? Allettate, con demenza, in carrozzina?</li>
+    <li>Posso chiamare le due famiglie precedenti? (chiamatele davvero)</li>
+    <li>Ha il permesso di soggiorno valido e in regola per lavorare?</li>
+    <li>Come gestirebbe un rifiuto di prendere i farmaci o di lavarsi?</li>
+    <li>Sa fare iniezioni, misurare pressione e glicemia?</li>
+    <li>Che riposi le servono, e dove passa le ferie?</li>
+    <li>Fate un periodo di prova pagato, scritto nel contratto (per il CCNL di solito 30 giorni di lavoro effettivo).</li>
+  </ul></div>`;
+}
+
+const PRATICHE = [
+  ["invalidita","Invalidità civile e Legge 104","Il medico di base invia il certificato introduttivo all'INPS, poi si fa la domanda (anche gratis tramite patronato) e si va a visita."],
+  ["accompagnamento","Indennità di accompagnamento","Spetta a chi è invalido al 100% e non riesce a camminare o a fare da solo gli atti quotidiani. Non dipende dal reddito."],
+  ["permessi","Permessi 104 al lavoro","3 giorni al mese, divisibili tra i familiari che lavorano. Domanda all'INPS e al proprio datore di lavoro."],
+  ["congedo","Congedo straordinario retribuito","Fino a 2 anni in tutta la vita lavorativa per assistere un familiare con 104 grave."],
+  ["ticket","Esenzione ticket","Per età e reddito, per invalidità o per patologia. Si chiede all'ASL."],
+  ["isee","ISEE sociosanitario","Serve per quasi tutti i contributi. Si fa al CAF, gratis."],
+  ["fisco","Detrazioni e deduzioni per la badante","Deduzione dei contributi versati e detrazione del 19% della spesa di assistenza. Conservare ricevute e bollettini."],
+  ["universale","Prestazione universale (over 80)","Per chi ha almeno 80 anni, bisogno assistenziale gravissimo e ISEE sociosanitario fino a 6.000 €: un importo in più sull'accompagnamento, da usare per badante o servizi. Misura sperimentale: verificare se è ancora attiva."],
+  ["domiciliare","Assistenza domiciliare (ADI o SAD)","ADI dall'ASL per cure sanitarie a casa, SAD dal Comune per aiuto alla persona."],
+  ["regionali","Contributi della Regione","In Sardegna c'è il programma «Ritornare a casa Plus». Chiedere ai servizi sociali del Comune."],
+  ["hcp","Home Care Premium","Se un figlio o un familiare è dipendente pubblico: contributo INPS per l'assistenza a casa."],
+  ["contrassegno","Contrassegno parcheggio disabili","Si chiede al Comune con il certificato dell'ASL."],
+  ["ads","Amministratore di sostegno","Se la persona non riesce più a gestire soldi e firme. Ricorso al giudice tutelare, anche senza avvocato."]
+];
+function vAiuti(){
+  const st = S.config.pratiche || {};
+  const p = permessiMese(mese);
+  const perChi = {};
+  p.rows.forEach(r => perChi[r.chi] = (perChi[r.chi]||0) + num(r.giorni));
+  const fatte = PRATICHE.filter(([k]) => st[k] === "Fatto" || st[k] === "Non serve").length;
+  return `
+  <h2>104 e aiuti</h2>
+  <p class="lead">Le pratiche che una famiglia di solito si perde per strada. Segnate a che punto siete, così tutti i fratelli lo sanno.</p>
+  <div class="card"><div class="row between"><h3 style="margin:0">Pratiche</h3><span class="pill">${fatte} di ${PRATICHE.length} sistemate</span></div>
+  ${PRATICHE.map(([k,t,d]) => `<div class="check"><div class="main"><div style="font-weight:600">${t}</div><div class="small muted">${d}</div></div><select id="pr_${k}" data-pratica="${k}" aria-label="Stato: ${esc(t)}">${["Da fare","In corso","Fatto","Non serve"].map(o => `<option ${ (st[k]||"Da fare")===o?"selected":""}>${o}</option>`).join("")}</select></div>`).join("")}
+  </div>
+  <div class="card" style="margin-top:12px"><div class="row between" style="align-items:flex-end">${monthPicker()}${addBtn("permessi","Segna un permesso")}</div>
+  <h3 style="margin-top:14px">Permessi 104 di ${monthName(mese)}: ${p.usati} di 3 giorni</h3>
+  <div class="meter" style="margin-bottom:12px"><i style="width:${Math.min(100,p.usati/3*100)}%"></i></div>
+  ${p.usati > 3 ? `<p class="notice">Avete segnato più di 3 giorni: controllate, perché l'INPS ne riconosce al massimo 3 al mese per la stessa persona assistita.</p>` : ""}
+  ${Object.keys(perChi).length ? `<p class="small" style="margin:0 0 10px">${Object.entries(perChi).map(([id,g]) => `${esc(famName(id))}: <b>${g}</b>`).join(" · ")}</p>` : ""}
+  <div class="list">${p.rows.length ? p.rows.sort((a,b)=>a.data<b.data?-1:1).map(r => item("permessi", r, famName(r.chi), `${fmtDate(r.data)}${r.note?" · "+esc(r.note):""}`, pill(r.giorni + (num(r.giorni)===1?" giorno":" giorni")))).join("") : empty("Nessun permesso segnato in questo mese.")}</div></div>`;
+}
+
+function vSalute(){
+  const prossimi = S.agenda.filter(e => daysTo(e.data) >= 0).sort((a,b) => (a.data+(a.ora||"")) < (b.data+(b.ora||"")) ? -1 : 1);
+  const passati = S.agenda.filter(e => daysTo(e.data) < 0).sort((a,b) => a.data < b.data ? 1 : -1).slice(0,5);
+  return `
+  <h2>Salute e agenda</h2>
+  <p class="lead">Farmaci, visite e turni: chi accompagna, chi passa a trovarla, quando ricomprare le medicine.</p>
+  <div class="row between" style="margin-bottom:10px"><h3 style="margin:0">Farmaci</h3>${addBtn("farmaci","Aggiungi un farmaco")}</div>
+  <div class="list">${S.farmaci.length ? S.farmaci.map(f => { const n = f.finisce ? daysTo(f.finisce) : null; return item("farmaci", f, f.nome, [f.dose, f.orari, f.note].filter(Boolean).map(esc).join(" · "), n===null ? "" : pill(n<0?"Finito":n<=10?`Finisce tra ${n} gg`:"Scorta ok", n<=3?"bad":n<=10?"warn":"good")); }).join("") : empty("Segnate ogni farmaco con dose e orari: finisce anche nella Scheda SOS.")}</div>
+  <div class="row between" style="margin:24px 0 10px"><h3 style="margin:0">Prossimi impegni</h3>${addBtn("agenda","Aggiungi un impegno")}</div>
+  <div class="list">${prossimi.length ? prossimi.map(e => item("agenda", e, e.titolo, `${fmtDate(e.data)}${e.ora?" alle "+esc(e.ora):""} · ${esc(e.tipo||"")}${e.chi?" · se ne occupa "+esc(famName(e.chi)):" · <b>nessuno assegnato</b>"}`, pill(daysTo(e.data)===0?"Oggi":daysTo(e.data)===1?"Domani":`Tra ${daysTo(e.data)} gg`, daysTo(e.data)<=1?"warn":""))).join("") : empty("Visite, analisi, turni di assistenza: mettete chi se ne occupa, così non si scopre all'ultimo che non va nessuno.")}</div>
+  ${passati.length ? `<h3 style="margin-top:20px" class="muted">Ultimi passati</h3><div class="list">${passati.map(e => item("agenda", e, e.titolo, fmtDate(e.data) + (e.chi?" · "+esc(famName(e.chi)):""), "")).join("")}</div>` : ""}`;
+}
+
+function vFamiglia(){
+  const a = S.config.assistito || {};
+  const qsum = S.famiglia.reduce((s,f) => s + num(f.quota), 0);
+  return `
+  <h2>Famiglia</h2>
+  <p class="lead">Chi è assistito e chi se ne prende cura.${local ? "" : " Per far usare l'app ai fratelli, condividete questa pagina dal menu Condividi dando il permesso di modifica (Contributor)."}</p>
+  <div class="card"><div class="row between"><h3 style="margin:0">${esc(a.nome || "Persona assistita")}</h3><button type="button" class="btn ghost" data-add="config/assistito">${a.nome ? "Modifica i dati" : "Inserisci i dati"}</button></div>
+  ${a.nome ? `<p class="small muted" style="margin:6px 0 0">${[a.nascita ? eta(a.nascita)+" anni" : "", a.indirizzo, a.medico ? "medico: "+a.medico : ""].filter(Boolean).map(esc).join(" · ")}</p>
+  <p class="small" style="margin:8px 0 0">Entrate al mese: <b class="num">${eur(num(a.pensione)+num(a.accompagnamento)+num(a.altreEntrate))}</b> (pensione ${eur(a.pensione)}, accompagnamento ${eur(a.accompagnamento)})</p>` : `<p class="small muted">Nome, medico, allergie, farmaci ed entrate: servono per la Scheda SOS e per il calcolo delle spese.</p>`}</div>
+  <div class="row between" style="margin:22px 0 10px"><h3 style="margin:0">Chi divide le spese</h3>${addBtn("famiglia","Aggiungi un familiare")}</div>
+  <div class="list">${S.famiglia.length ? S.famiglia.map(f => item("famiglia", f, f.nome, [f.ruolo, f.telefono].filter(Boolean).map(esc).join(" · "), pill(qsum ? `${Math.round(num(f.quota)/qsum*100)}% delle spese` : `${Math.round(100/S.famiglia.length)}% delle spese`))).join("") : empty("Aggiungete i figli o i familiari che contribuiscono. Le quote possono essere uguali o diverse, per esempio 40% chi guadagna di più.")}</div>
+  ${local ? `<div class="card" style="margin-top:22px"><h3>I vostri dati</h3><p class="small muted" style="margin:0 0 12px">Tutto resta su questo telefono. Ogni tanto salvate una copia (per esempio una volta al mese) e tenetela su Drive o in una mail: se cambiate telefono la ripristinate da qui.</p>
+    <div class="row"><button type="button" class="btn" data-backup>${icon("download")}Salva una copia</button><button type="button" class="btn ghost" data-restore>Ripristina una copia</button></div></div>` : ""}
+  <p class="small muted" style="margin-top:22px"><button type="button" class="btn link" data-rename style="padding:0">Cambia il tuo nome${S.config.utente?.nome ? " (" + esc(S.config.utente.nome) + ")" : ""}</button></p>`;
+}
+
+function vPiano(){
+  const a = S.config.questionario;
+  if (!a) return `<h2>Il vostro piano</h2>
+    <p class="lead">Rispondete a 15 domande su come sta la persona che assistete. Ci vogliono 3 minuti e potete rifarle quando le cose cambiano.</p>
+    <div class="hero-card"><p>Alla fine trovate: che tipo di assistenza serve e quanto costa, il profilo della badante giusta, le pratiche da avviare, gli ausili utili in casa e come organizzarvi tra fratelli.</p><p><button type="button" class="btn" data-quiz>Inizia le domande</button></p></div>`;
+  const p = piano(a), b = bilancio(curMonth());
+  const nome = S.config.assistito?.nome || (a.chi ? a.chi.toLowerCase() : "la persona assistita");
+  const budgetMax = [1000, 1800, 2500, Infinity][qi(a,"budget")] ?? null;
+  const fuori = budgetMax !== null && p.costo[0] > budgetMax;
+  const li = arr => `<ul>${arr.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`;
+  return `
+  <h2>Il piano per ${esc(nome)}</h2>
+  <p class="lead">Costruito sulle vostre risposte del ${fmtDate(a.aggiornato)}. È un punto di partenza da discutere in famiglia e con il medico.</p>
+  <div class="stack plan">
+    <div class="card"><h3>Che assistenza serve</h3><p style="margin:0 0 6px;font-weight:700;font-size:18px">${esc(p.tipo)}</p><p class="small muted" style="margin:0 0 10px">${esc(p.perche)}</p>
+      <div class="row between"><span>Costo indicativo al mese</span><b class="num">${eur(p.costo[0])} – ${eur(p.costo[1])}</b></div>
+      ${b.entrate ? `<div class="row between small muted"><span>Entrate di ${esc(nome)} (pensione e accompagnamento)</span><span class="num">${eur(b.entrate)}</span></div>` : ""}
+      ${fuori ? `<p class="notice">Il costo supera quanto avete detto di poter spendere. Partite dalle pratiche qui sotto: accompagnamento, contributi del Comune e della Regione possono coprire una parte.</p>` : ""}</div>
+    <div class="card"><h3>La badante giusta per voi</h3>${p.req.length ? `<p class="small muted" style="margin:0 0 8px">Cosa deve saper fare. Chiedetelo al colloquio e segnatelo nella scheda di ogni candidata.</p>${li(p.req.map(k => REQ[k]))}` : `<p class="small muted" style="margin:0">Non servono competenze particolari: contano affidabilità e simpatia reciproca.</p>`}
+      <p style="margin:10px 0 0"><button type="button" class="btn ghost" data-go="badante">Confronta le candidate</button></p></div>
+    <div class="card"><h3>Pratiche da avviare</h3>${li(p.pratiche)}<p style="margin:6px 0 0"><button type="button" class="btn ghost" data-go="aiuti">Segna a che punto siete</button></p></div>
+    ${p.ausili.length ? `<div class="card"><h3>Ausili e sicurezza in casa</h3>${li(p.ausili)}</div>` : ""}
+    <div class="card"><h3>Organizzazione tra fratelli</h3>${li(p.fam)}</div>
+    ${sample ? `<div class="card"><h3>Un parere su misura</h3><p class="small muted" style="margin:0 0 10px">Claude legge le vostre risposte e le spese e vi scrive 5 consigli per le prossime settimane.</p><div class="ai-out" id="aiOut">${esc(aiText)}</div><p style="margin:10px 0 0"><button type="button" class="btn" data-ask>Chiedi a Claude</button></p></div>` : ""}
+    <p><button type="button" class="btn ghost" data-quiz>Rifai le domande</button></p>
+  </div>`;
+}
+const VIEWS = {vicino:vVicino, bacheca:vBacheca, piano:vPiano,oggi:vOggi,spese:vSpese, documenti:vDocumenti, badante:vBadante, aiuti:vAiuti, salute:vSalute, famiglia:vFamiglia};
+function render(){
+  renderTabs();
+  const d = new Date().toLocaleDateString("it-IT", {weekday:"long", day:"numeric", month:"long"});
+  $("#helloDate").textContent = d.charAt(0).toUpperCase() + d.slice(1);
+  $("#hello").textContent = store ? saluto() : "Accanto";
+  if (!store || !loaded) return;
+  const benv = !S.config.utente || wStep === 1;
+  $("#tabs").hidden = benv; $("#top").hidden = benv; $(".foot").hidden = benv;
+  if (benv) { $("#view").innerHTML = vBenvenuto(); return; }
+  let banner = "";
+  if (offline === "prova") banner = `<p class="notice">Modalità prova: state usando l'app senza accesso, quindi i dati non vengono salvati. Accedete a Claude per salvarli e condividerli con la famiglia.</p>`;
+  else if (offline) banner = `<p class="notice">Non riesco a raggiungere i dati salvati. Quello che vedete potrebbe non essere aggiornato.</p>`;
+  $("#view").innerHTML = banner + VIEWS[tab]();
+}
+$("#view").addEventListener("click", e => {
+  const g = e.target.closest("[data-go]"); if (g) return setTab(g.dataset.go);
+  const ft = e.target.closest("[data-foto]");
+  if (ft) { const d = S.documenti.find(x => x.id === ft.dataset.foto); if (d?.foto) showMsg(d.nome, d.foto.startsWith("data:image") ? `<img src="${esc(d.foto)}" alt="${esc(d.nome)}" style="width:100%;border-radius:12px">` : `<p style="margin:0"><a href="${esc(d.foto)}" target="_blank" rel="noopener">Apri il file in una nuova scheda</a></p>`); return; }
+  if (e.target.closest("[data-backup]")) return backup();
+  if (e.target.closest("[data-restore]")) { const i = $("#restoreInput"); i.value = ""; return i.click(); }
+  if (e.target.closest("[data-install]")) { installEvt?.prompt(); installEvt = null; return; }
+  if (e.target.closest("[data-hideinstall]")) { try { localStorage.setItem("accanto-noinstall", "1"); } catch {} return render(); }
+  if (e.target.closest("[data-wskip]")) { safe(() => store.set("config", "utente", {nome: ""})); return; }
+  if (e.target.closest("[data-wend]")) { wStep = 0; return render(); }
+  if (e.target.closest("[data-badante-entra]")) { safe(() => store.set("config", "utente", {nome: "", ruolo: "badante"})).then(() => { setTab("bacheca"); openProfilo(); }); return; }
+  if (e.target.closest("[data-profilo]")) return openProfilo();
+  const dv = e.target.closest("[data-dove]"); if (dv) { doveCerco = dv.dataset.dove; return render(); }
+  const ct = e.target.closest("[data-contatta]"); if (ct) { const p = S.profili.find(x => x.id === ct.dataset.contatta); if (p) contatta(p); return; }
+  const cd = e.target.closest("[data-candida]");
+  if (cd) {
+    const p = S.profili.find(x => x.id === cd.dataset.candida); if (!p) return;
+    const giaC = S.badanti.some(b => b.daProfilo === p.id);
+    if (!giaC) { const r = {}; ["demenza","mobilizza","notte","glicemia","piaghe","dialetto","animali"].forEach(k => r["r_" + k] = !!p["r_" + k]);
+      safe(() => store.add("badanti", {nome: p.nome, telefono: p.telefono, stato: "Da sentire", formula: p.formula === "Va bene tutto" ? "" : p.formula, esperienza: p.esperienza || "", stipendio: "", referenze: false, patente: !!p.patente, ...r, note: "Dalla bacheca di Accanto. " + (p.presentazione || ""), daProfilo: p.id})); }
+    cd.textContent = "Aggiunta alle candidate"; cd.disabled = true; return;
+  }
+  if (e.target.closest("[data-rename]")) {
+    showMsg("Il tuo nome", `<label class="f">Come ti chiami?<input id="rn" value="${esc(S.config.utente?.nome || "")}"></label>`, `<span></span><button type="button" class="btn" id="rnOk">Salva</button>`);
+    $("#rnOk").onclick = async () => { await safe(() => store.set("config", "utente", {nome: $("#rn").value.trim()})); dlg.close(); };
+    return;
+  }
+  if (e.target.closest("[data-scan]")) return startScan();
+  if (e.target.closest("[data-quiz]")) return openQuiz();
+  const ask = e.target.closest("[data-ask]"); if (ask) return askClaude(ask);
+  const a = e.target.closest("[data-add]"); if (a) return openForm(a.dataset.add);
+  const ed = e.target.closest("[data-edit]");
+  if (ed) { const rec = S[ed.dataset.edit].find(r => r.id === ed.dataset.id); if (rec) openForm(ed.dataset.edit, rec); }
+});
+$("#view").addEventListener("submit", async e => {
+  if (e.target.id !== "wForm") return;
+  e.preventDefault();
+  const nome = $("#w_nome").value.trim(), ass = $("#w_ass").value.trim();
+  if (ass) { const {id, ...prev} = S.config.assistito || {}; await safe(() => store.set("config", "assistito", {...prev, nome: ass})); }
+  wStep = 1;
+  await safe(() => store.set("config", "utente", {nome}));
+  render(); window.scrollTo(0, 0);
+});
+$("#view").addEventListener("change", e => {
+  if (e.target.id === "mesePick" && e.target.value) { mese = e.target.value; render(); }
+  if (e.target.id === "filtroZona") { filtroZona = e.target.value.trim(); render(); }
+  if (e.target.id === "filtroFormula") { filtroFormula = e.target.value; render(); }
+  const pr = e.target.dataset.pratica;
+  if (pr) { const {id, ...rest} = S.config.pratiche || {}; safe(() => store.set("config", "pratiche", {...rest, [pr]: e.target.value})); }
+});
+boot();
+</script>
+</body></html>
